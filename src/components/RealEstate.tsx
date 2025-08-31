@@ -680,7 +680,7 @@ const PropertyPopup: React.FC<{ feature: PropertyFeature }> = ({ feature }) => {
 
       <p className="text-sm text-gray-600 mb-3">{properties.description}</p>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-col space-y-6">
         <span className="text-xs text-gray-500">ID: {properties.id}</span>
         <Button
           size="sm"
