@@ -25,12 +25,10 @@ import type { LeafletMouseEvent } from "leaflet";
 import type {
   Feature,
   FeatureCollection,
-  Polygon,
   Geometry,
   GeoJsonProperties,
 } from "geojson";
 import type { PathOptions, StyleFunction } from "leaflet";
-// import { PathOptions, StyleFunction } from "leaflet";
 import ReactDOM from "react-dom/client";
 import "leaflet/dist/leaflet.css";
 
@@ -51,7 +49,7 @@ interface PropertyFeatureProperties {
 type PropertyFeature = Feature<Geometry, PropertyFeatureProperties>;
 
 type PropertyFeatureCollection = FeatureCollection<
-  Polygon,
+  Geometry,
   PropertyFeatureProperties
 >;
 
@@ -681,7 +679,9 @@ const PropertyPopup: React.FC<{ feature: PropertyFeature }> = ({ feature }) => {
       <p className="text-sm text-gray-600 mb-3">{properties.description}</p>
 
       <div className="flex items-center justify-between flex-col space-y-6">
-        <span className="text-xs text-gray-500">ID: {properties.id}</span>
+        <span className="text-xs text-gray-500 font-semibold">
+          ID: {properties.id}
+        </span>
         <Button
           size="sm"
           className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
@@ -694,7 +694,7 @@ const PropertyPopup: React.FC<{ feature: PropertyFeature }> = ({ feature }) => {
 };
 
 /* ---------------- Main Map ---------------- */
-const RealEstateMapApp: React.FC = () => {
+const RealEstateMapApp = () => {
   const [currentLayer, setCurrentLayer] = useState(0);
   const [searchLocation, setSearchLocation] = useState<{
     lat: number;
@@ -833,7 +833,7 @@ const RealEstateMapApp: React.FC = () => {
       />
 
       {/* Legend */}
-      <Card className="absolute bottom-4 left-4 z-[1000] w-64">
+      <Card className="absolute bottom-4 left-4 z-[1000] w-48">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm flex items-center gap-2">
             <Home className="w-4 h-4" />
@@ -858,7 +858,7 @@ const RealEstateMapApp: React.FC = () => {
 
       {/* Property Count */}
       <Card className="absolute bottom-4 right-4 z-[1000]">
-        <CardContent className="p-4">
+        <CardContent className="p-2">
           <div className="text-center">
             <p className="text-2xl font-bold text-blue-600">
               {sampleGeoJSON.features.length}

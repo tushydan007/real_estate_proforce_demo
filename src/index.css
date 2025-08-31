@@ -118,3 +118,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+.leaflet-popup-content {
+  width: 100% !important;  /* take full width */
+  margin: 0 !important;
+}
+
+.property-popup {
+  width: 400px;   /* match your React div width */
+  max-width: 100%;
+}
