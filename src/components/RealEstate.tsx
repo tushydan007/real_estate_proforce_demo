@@ -545,7 +545,6 @@ const MapSearchControl: React.FC<{
   );
 };
 
-
 /* ---------------- Map Controller ---------------- */
 const MapController: React.FC<{
   center: [number, number] | null;
@@ -645,7 +644,7 @@ const PropertyPopup: React.FC<{ feature: PropertyFeature }> = ({ feature }) => {
   };
 
   return (
-    <div className="p-4 max-w-sm">
+    <div className="bg-white p-4 rounded-md shadow-lg w-64">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-bold text-lg text-gray-900">{properties.title}</h3>
         <Badge className={getStatusColor(properties.status)}>
@@ -683,7 +682,10 @@ const PropertyPopup: React.FC<{ feature: PropertyFeature }> = ({ feature }) => {
 
       <div className="flex items-center justify-between">
         <span className="text-xs text-gray-500">ID: {properties.id}</span>
-        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          size="sm"
+          className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+        >
           Contact: {properties.contact}
         </Button>
       </div>
@@ -702,8 +704,6 @@ const RealEstateMapApp: React.FC = () => {
   const mapRef = useRef<L.Map | null>(null);
 
   const abeokutaCenter: [number, number] = [7.1475, 3.3488];
-
-  
 
   const handleLocationFound = (
     lat: number,
