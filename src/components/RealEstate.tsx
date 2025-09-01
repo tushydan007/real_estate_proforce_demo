@@ -34,16 +34,33 @@ import "leaflet/dist/leaflet.css";
 
 /* ----------------------------- Types ----------------------------- */
 
+// interface PropertyFeatureProperties {
+//   id: string;
+//   title: string;
+//   price: string;
+//   size: string;
+//   type: string;
+//   status: string;
+//   description: string;
+//   contact: string;
+//   dateAdded: string;
+// }
+
 interface PropertyFeatureProperties {
+  fid: number;
   id: string;
-  title: string;
-  price: string;
-  size: string;
-  type: string;
-  status: string;
-  description: string;
+  unit: string;
+  parentCompany: string;
+  unitType: string;
+  unitUse: string;
+  area: number;
+  noOfBuildings: number;
+  condition: string;
+  unitManager: string;
+  address: string;
+  lastUpdated: string;
+  price: number;
   contact: string;
-  dateAdded: string;
 }
 
 type PropertyFeature = Feature<Geometry, PropertyFeatureProperties>;
@@ -72,15 +89,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP001",
-        title: "Premium Residential Plot",
-        price: "₦15,000,000",
-        size: "600 sqm",
-        type: "Residential",
-        status: "Available",
-        description: "Well-located residential plot in serene environment",
-        contact: "+234 801 234 5678",
-        dateAdded: "2025-01-15",
+        fid: 1,
+        id: "001",
+        unit: "Galaxies",
+        parentCompany: "Proforce Ltd",
+        unitType: "Commercial",
+        unitUse: "Official",
+        area: 170703.40461901575,
+        noOfBuildings: 5,
+        condition: "Under Construction",
+        unitManager: "Engr. Tope Robert",
+        address: "Wing D",
+        lastUpdated: "26/08/2025",
+        price: 40000000,
+        contact: "+234 809 456 7890",
       },
       geometry: {
         type: "Polygon",
@@ -98,15 +120,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP002",
-        title: "Commercial Land",
-        price: "₦45,000,000",
-        size: "1200 sqm",
-        type: "Commercial",
-        status: "Available",
-        description: "Strategic commercial plot along major road",
-        contact: "+234 802 345 6789",
-        dateAdded: "2025-01-20",
+        fid: 2,
+        id: "002",
+        unit: "Intelligence",
+        parentCompany: "Proforce Ltd",
+        unitType: "Commercial",
+        unitUse: "Official",
+        area: 58439.510457662283,
+        noOfBuildings: 4,
+        condition: "Planned",
+        unitManager: "",
+        address: "Wing J",
+        lastUpdated: "26/08/2025",
+        price: 35000000,
+        contact: "+234 805 987 6543",
       },
       geometry: {
         type: "Polygon",
@@ -124,15 +151,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP003",
-        title: "Luxury Estate Plot",
-        price: "₦25,000,000",
-        size: "800 sqm",
-        type: "Residential",
-        status: "Reserved",
-        description: "Premium estate plot with modern infrastructure",
-        contact: "+234 803 456 7890",
-        dateAdded: "2025-01-10",
+        fid: 3,
+        id: "003",
+        unit: "Galaxies Ground Station",
+        parentCompany: "Profroce Galaxies",
+        unitType: "Facility",
+        unitUse: "Official",
+        area: 67345.258203497157,
+        noOfBuildings: 1,
+        condition: "Completed",
+        unitManager: "Engr. Tope Robert",
+        address: "Wing J",
+        lastUpdated: "26/08/2025",
+        price: 50000000,
+        contact: "+234 803 123 4567",
       },
       geometry: {
         type: "Polygon",
@@ -150,15 +182,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP004",
-        title: "Industrial Plot",
-        price: "₦80,000,000",
-        size: "2000 sqm",
-        type: "Industrial",
-        status: "Available",
-        description: "Large industrial plot suitable for manufacturing",
-        contact: "+234 804 567 8901",
-        dateAdded: "2025-01-25",
+        fid: 4,
+        id: "004",
+        unit: "Military Base",
+        parentCompany: "Nigerian Army",
+        unitType: "Office Block",
+        unitUse: "Official",
+        area: 223474.46749162266,
+        noOfBuildings: 10,
+        condition: "Planned",
+        unitManager: "",
+        address: "Wing D",
+        lastUpdated: "26/08/2025",
+        price: 60000000,
+        contact: "+234 812 345 6789",
       },
       geometry: {
         type: "Polygon",
@@ -176,15 +213,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP005",
-        title: "Affordable Housing Plot",
-        price: "₦8,000,000",
-        size: "400 sqm",
-        type: "Residential",
-        status: "Available",
-        description: "Budget-friendly residential plot for young families",
-        contact: "+234 805 678 9012",
-        dateAdded: "2025-02-01",
+        fid: 5,
+        id: "005",
+        unit: "Air Systems",
+        parentCompany: "Profroce Ltd",
+        unitType: "Commercial",
+        unitUse: "Official",
+        area: 87686.890013787895,
+        noOfBuildings: 4,
+        condition: "Planned",
+        unitManager: "Mr. Abdul Malik",
+        address: "Wing E",
+        lastUpdated: "26/08/2025",
+        price: 40000000,
+        contact: "+234 816 234 5678",
       },
       geometry: {
         type: "Polygon",
@@ -202,15 +244,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP006",
-        title: "Corner Plot Advantage",
-        price: "₦18,000,000",
-        size: "650 sqm",
-        type: "Residential",
-        status: "Available",
-        description: "Corner plot with dual road access",
-        contact: "+234 806 789 0123",
-        dateAdded: "2025-01-18",
+        fid: 6,
+        id: "006",
+        unit: "WMO Vests & Helmets",
+        parentCompany: "Proforce Limited",
+        unitType: "Commercial",
+        unitUse: "Official",
+        area: 61520.714777981862,
+        noOfBuildings: 3,
+        condition: "Planned",
+        unitManager: "Mr. John Doe",
+        address: "Wing E",
+        lastUpdated: "26/08/2025",
+        price: 25000000,
+        contact: "+234 818 765 4321",
       },
       geometry: {
         type: "Polygon",
@@ -228,15 +275,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP007",
-        title: "Mixed Development Plot",
-        price: "₦35,000,000",
-        size: "1000 sqm",
-        type: "Mixed Use",
-        status: "Available",
-        description: "Suitable for residential and commercial development",
-        contact: "+234 807 890 1234",
-        dateAdded: "2025-02-05",
+        fid: 7,
+        id: "007",
+        unit: "Vaults & Gardens",
+        parentCompany: "O'la Kleen Holdings",
+        unitType: "Commercial",
+        unitUse: "Official",
+        area: 269151.69612896885,
+        noOfBuildings: 5,
+        condition: "Under Construction",
+        unitManager: "",
+        address: "Wing C & D",
+        lastUpdated: "26/08/2025",
+        price: 75000000,
+        contact: "+234 803 123 4567",
       },
       geometry: {
         type: "Polygon",
@@ -254,15 +306,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP008",
-        title: "Waterfront Property",
-        price: "₦55,000,000",
-        size: "1500 sqm",
-        type: "Residential",
-        status: "Available",
-        description: "Beautiful waterfront property with scenic views",
-        contact: "+234 808 901 2345",
-        dateAdded: "2025-01-12",
+        fid: 8,
+        id: "008",
+        unit: "MRO",
+        parentCompany: "Proforce Ltd",
+        unitType: "Commercial",
+        unitUse: "After Sales Servvice",
+        area: 187447.12870307046,
+        noOfBuildings: 6,
+        condition: "Completed",
+        unitManager: "Mr. James Smith",
+        address: "Wing G",
+        lastUpdated: "26/08/2025",
+        price: 40000000,
+        contact: "+234 905 678 1234",
       },
       geometry: {
         type: "Polygon",
@@ -280,15 +337,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP009",
-        title: "Hillside Retreat",
-        price: "₦22,000,000",
-        size: "750 sqm",
-        type: "Residential",
-        status: "Available",
-        description: "Elevated plot with panoramic city views",
-        contact: "+234 809 012 3456",
-        dateAdded: "2025-01-28",
+        fid: 9,
+        id: "009",
+        unit: "Land Systems",
+        parentCompany: "Proforce Ltd",
+        unitType: "Commercial",
+        unitUse: "Official",
+        area: 592417.17618602328,
+        noOfBuildings: 8,
+        condition: "Under Construction",
+        unitManager: "Mr. John Mason",
+        address: "Wing B",
+        lastUpdated: "26/08/2025",
+        price: 80000000,
+        contact: "+234 907 543 2109",
       },
       geometry: {
         type: "Polygon",
@@ -306,15 +368,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP010",
-        title: "Agricultural Land",
-        price: "₦12,000,000",
-        size: "2500 sqm",
-        type: "Agricultural",
-        status: "Available",
-        description: "Fertile farmland suitable for various crops",
-        contact: "+234 810 123 4567",
-        dateAdded: "2025-02-03",
+        fid: 10,
+        id: "010",
+        unit: "Admin 2",
+        parentCompany: "O'la Kleen Holdings",
+        unitType: "Administrative",
+        unitUse: "Official",
+        area: 143480.50914202258,
+        noOfBuildings: 8,
+        condition: "Under Construction",
+        unitManager: "Mr. Alex Johnson",
+        address: "Wing A",
+        lastUpdated: "27/08/2025",
+        price: 50000000,
+        contact: "+234 913 876 5432",
       },
       geometry: {
         type: "Polygon",
@@ -332,15 +399,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP011",
-        title: "City Center Plot",
-        price: "₦65,000,000",
-        size: "900 sqm",
-        type: "Commercial",
-        status: "Available",
-        description: "Prime commercial plot in bustling city center",
-        contact: "+234 811 234 5678",
-        dateAdded: "2025-01-08",
+        fid: 11,
+        id: "011",
+        unit: "Admin 1",
+        parentCompany: "O'la Kleen",
+        unitType: "Administrative",
+        unitUse: "Official",
+        area: 153402.38078648224,
+        noOfBuildings: 6,
+        condition: "Completed",
+        unitManager: "Mr. Abdul Fatai Sanusi",
+        address: "Wing A",
+        lastUpdated: "27/08/2025",
+        price: 50000000,
+        contact: "+234 915 432 1098",
       },
       geometry: {
         type: "Polygon",
@@ -358,15 +430,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP012",
-        title: "Suburban Family Plot",
-        price: "₦13,500,000",
-        size: "550 sqm",
-        type: "Residential",
-        status: "Available",
-        description: "Perfect for suburban family home development",
-        contact: "+234 812 345 6789",
-        dateAdded: "2025-02-08",
+        fid: 12,
+        id: "012",
+        unit: "Car Park",
+        parentCompany: "Proforce City",
+        unitType: "Admin",
+        unitUse: "Admin",
+        area: 107255.14631315973,
+        noOfBuildings: 7,
+        condition: "Under Construction",
+        unitManager: "Admin",
+        address: "Wing A",
+        lastUpdated: "27/08/2025",
+        price: 30000000,
+        contact: "+234 805 321 4567",
       },
       geometry: {
         type: "Polygon",
@@ -384,15 +461,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP013",
-        title: "Investment Opportunity",
-        price: "₦30,000,000",
-        size: "1100 sqm",
-        type: "Mixed Use",
-        status: "Available",
-        description: "High ROI potential in developing area",
-        contact: "+234 813 456 7890",
-        dateAdded: "2025-01-30",
+        fid: 13,
+        id: "013",
+        unit: "Check Point",
+        parentCompany: "Proforce City",
+        unitType: "Security",
+        unitUse: "Admin",
+        area: 62631.263273547869,
+        noOfBuildings: 0,
+        condition: "Completed",
+        unitManager: "Mr. Samson",
+        address: "Wing A",
+        lastUpdated: "27/08/2025",
+        price: 0,
+        contact: "+234 803 567 8901",
       },
       geometry: {
         type: "Polygon",
@@ -410,15 +492,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP014",
-        title: "Eco-Friendly Plot",
-        price: "₦19,000,000",
-        size: "700 sqm",
-        type: "Residential",
-        status: "Available",
-        description: "Green development plot with eco-friendly features",
-        contact: "+234 814 567 8901",
-        dateAdded: "2025-02-10",
+        fid: 14,
+        id: "014",
+        unit: "Officers Residence",
+        parentCompany: "Proforce Ltd",
+        unitType: "Residential",
+        unitUse: "Residential",
+        area: 335927.98754937761,
+        noOfBuildings: 20,
+        condition: "Planned",
+        unitManager: "N/A",
+        address: "Wing P",
+        lastUpdated: "27/08/2025",
+        price: 60000000,
+        contact: "+234 809 789 0123",
       },
       geometry: {
         type: "Polygon",
@@ -436,15 +523,20 @@ const sampleGeoJSON: PropertyFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "PROP015",
-        title: "Executive Estate Plot",
-        price: "₦40,000,000",
-        size: "1300 sqm",
-        type: "Residential",
-        status: "Available",
-        description: "Luxury executive estate plot with premium amenities",
-        contact: "+234 815 678 9012",
-        dateAdded: "2025-01-22",
+        fid: 15,
+        id: "015",
+        unit: "Managers Residence",
+        parentCompany: "Proforce Ltd",
+        unitType: "Residential",
+        unitUse: "Residential",
+        area: 323009.76909431268,
+        noOfBuildings: 8,
+        condition: "Under Construction",
+        unitManager: "Mr. Cornelius",
+        address: "Wing V",
+        lastUpdated: "27/08/2025",
+        price: 70000000,
+        contact: "+234 812 654 3210",
       },
       geometry: {
         type: "Polygon",
@@ -644,16 +736,16 @@ const PropertyPopup: React.FC<{ feature: PropertyFeature }> = ({ feature }) => {
   return (
     <div className="bg-white p-4 rounded-md shadow-lg w-64">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-bold text-lg text-gray-900">{properties.title}</h3>
-        <Badge className={getStatusColor(properties.status)}>
-          {properties.status}
+        <h3 className="font-bold text-lg text-gray-900">{properties.unit}</h3>
+        <Badge className={getStatusColor(properties.condition)}>
+          {properties.condition}
         </Badge>
       </div>
 
       <div className="space-y-2 mb-4">
         <div className="flex items-center gap-2 text-sm">
-          {getTypeIcon(properties.type)}
-          <span className="font-medium">{properties.type}</span>
+          {getTypeIcon(properties.unitType)}
+          <span className="font-medium">{properties.unitType}</span>
         </div>
 
         <div className="flex items-center gap-2 text-sm">
@@ -665,18 +757,18 @@ const PropertyPopup: React.FC<{ feature: PropertyFeature }> = ({ feature }) => {
 
         <div className="flex items-center gap-2 text-sm">
           <Ruler className="w-4 h-4 text-blue-600" />
-          <span>{properties.size}</span>
+          <span>{properties.area}</span>
         </div>
 
         <div className="flex items-center gap-2 text-sm">
           <Calendar className="w-4 h-4 text-gray-500" />
           <span>
-            Added: {new Date(properties.dateAdded).toLocaleDateString()}
+            Added: {new Date(properties.lastUpdated).toLocaleDateString()}
           </span>
         </div>
       </div>
 
-      <p className="text-sm text-gray-600 mb-3">{properties.description}</p>
+      <p className="text-sm text-gray-600 mb-3">{properties.contact}</p>
 
       <div className="flex items-center justify-between flex-col space-y-6">
         <span className="text-xs text-gray-500 font-semibold">
@@ -703,7 +795,7 @@ const RealEstateMapApp = () => {
   } | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
-  const abeokutaCenter: [number, number] = [7.1475, 3.3488];
+  const proforceCityCenter: [number, number] = [3.65586, 6.98647];
 
   const handleLocationFound = (
     lat: number,
@@ -720,11 +812,11 @@ const RealEstateMapApp = () => {
 
     // Safely cast to your property type
     const typedFeature = feature as unknown as PropertyFeature;
-    const { type, status } = typedFeature.properties;
+    const { unitType, condition } = typedFeature.properties;
 
     let color = "#3B82F6";
 
-    switch (type.toLowerCase()) {
+    switch (unitType.toLowerCase()) {
       case "residential":
         color = "#10B981";
         break;
@@ -745,9 +837,9 @@ const RealEstateMapApp = () => {
     return {
       color,
       weight: 2,
-      opacity: status === "Available" ? 1 : 0.6,
+      opacity: condition === "Available" ? 1 : 0.6,
       fillColor: color,
-      fillOpacity: status === "Available" ? 0.3 : 0.1,
+      fillOpacity: condition === "Available" ? 0.3 : 0.1,
     } as PathOptions;
   };
 
@@ -790,7 +882,7 @@ const RealEstateMapApp = () => {
   return (
     <div className="relative w-full h-screen">
       <MapContainer
-        center={abeokutaCenter}
+        center={proforceCityCenter}
         zoom={15}
         style={{ height: "100%", width: "100%" }}
         ref={mapRef}
@@ -821,7 +913,7 @@ const RealEstateMapApp = () => {
         )}
 
         <MapController
-          center={abeokutaCenter}
+          center={proforceCityCenter}
           searchLocation={searchLocation}
         />
       </MapContainer>
