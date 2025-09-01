@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Layers } from "lucide-react";
@@ -9,11 +9,11 @@ interface LayerControlProps {
   onLayerChange: (index: number) => void;
 }
 
-export const LayerControl: React.FC<LayerControlProps> = ({
+export const LayerControl = ({
   mapLayers,
   currentLayer,
   onLayerChange,
-}) => {
+}: LayerControlProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -26,10 +26,10 @@ export const LayerControl: React.FC<LayerControlProps> = ({
       </Button>
       {isOpen && (
         <Card className="absolute top-12 right-0 w-48 shadow-lg">
-          <CardHeader className="pb-2">
+          <CardHeader>
             <CardTitle className="text-sm">Map Layers</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1">
+          <CardContent className="space-y-3">
             {mapLayers.map((layer, index) => (
               <Button
                 key={layer.name}

@@ -1,5 +1,6 @@
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 
+
 export interface PropertyFeatureProperties {
   fid: number;
   id: string;

@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface MapSearchControlProps {
   onLocationFound: (lat: number, lng: number, displayName: string) => void;
 }
 
-export const MapSearchControl: React.FC<MapSearchControlProps> = ({
+export const MapSearchControl = ({
   onLocationFound,
-}) => {
+}: MapSearchControlProps) => {
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
@@ -35,11 +37,11 @@ export const MapSearchControl: React.FC<MapSearchControlProps> = ({
           result.display_name
         );
       } else {
-        alert("Location not found. Please try again.");
+        toast("Location not found. Please try again.");
       }
     } catch (error) {
       console.error("Search error:", error);
-      alert("Search failed. Please try again.");
+      toast("Search failed. Please try again.");
     } finally {
       setIsSearching(false);
     }

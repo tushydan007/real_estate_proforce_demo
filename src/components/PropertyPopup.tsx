@@ -1,4 +1,3 @@
-import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Ruler, Calendar, Home, MapPin } from "lucide-react";
@@ -8,7 +7,7 @@ interface PropertyPopupProps {
   feature: PropertyFeature;
 }
 
-export const PropertyPopup: React.FC<PropertyPopupProps> = ({ feature }) => {
+export const PropertyPopup = ({ feature }: PropertyPopupProps) => {
   const { properties } = feature;
 
   const getStatusColor = (status: string) => {
@@ -56,7 +55,7 @@ export const PropertyPopup: React.FC<PropertyPopupProps> = ({ feature }) => {
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Ruler className="w-4 h-4 text-blue-600" />
-          <span>{properties.area.toLocaleString()} m²</span>
+          <span>{properties.area.toFixed(2)} m²</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Calendar className="w-4 h-4 text-gray-500" />

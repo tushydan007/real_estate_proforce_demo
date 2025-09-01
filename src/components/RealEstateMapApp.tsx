@@ -1,29 +1,17 @@
-import React, { useRef, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  GeoJSON,
-  Marker,
-  Popup,
-} from "react-leaflet";
+import { useRef, useState } from "react";
+import { MapContainer, TileLayer, GeoJSON, Marker, Popup } from "react-leaflet";
 import L, { Layer } from "leaflet";
 import type { PathOptions } from "leaflet";
 import type { LeafletMouseEvent } from "leaflet";
 import ReactDOM from "react-dom/client";
-// Components
+import { sampleGeoJSON } from "../sampleData";
 import { MapSearchControl } from "../components/MapSearchControl";
 import { LayerControl } from "../components/LayerControl";
 import { MapController } from "../components/MapController";
 import { PropertyPopup } from "../components/PropertyPopup";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Home } from "lucide-react";
-// Types
-import type {
-  PropertyFeature,
-  PropertyFeatureCollection,
-} from "../../types";
-
-// Leaflet styles
+import type { PropertyFeature, PropertyFeatureCollection } from "../../types";
 import "leaflet/dist/leaflet.css";
 
 /* ---------------- Fix leaflet default marker icons ---------------- */
@@ -40,14 +28,14 @@ L.Icon.Default.mergeOptions({
 /* ---------------- Map Layers ---------------- */
 const mapLayers = [
   {
-    name: "OpenStreetMap",
-    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    attribution: "© OpenStreetMap contributors",
-  },
-  {
     name: "Satellite",
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     attribution: "© Esri",
+  },
+  {
+    name: "OpenStreetMap",
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: "© OpenStreetMap contributors",
   },
   {
     name: "Terrain",
@@ -56,11 +44,8 @@ const mapLayers = [
   },
 ];
 
-/* ---------------- Sample Data ---------------- */
-import { sampleGeoJSON } from "../sampleData";
-
 /* ---------------- Main Map ---------------- */
-const RealEstateMapApp: React.FC = () => {
+const RealEstateMapApp = () => {
   const [currentLayer, setCurrentLayer] = useState(0);
   const [searchLocation, setSearchLocation] = useState<{
     lat: number;
@@ -69,7 +54,7 @@ const RealEstateMapApp: React.FC = () => {
   } | null>(null);
 
   const mapRef = useRef<L.Map | null>(null);
-  const proforceCityCenter: [number, number] = [3.65586, 6.98647];
+  const proforceCityCenter: [number, number] = [6.98647, 3.65586];
 
   const handleLocationFound = (
     lat: number,
@@ -90,52 +75,53 @@ const RealEstateMapApp: React.FC = () => {
   };
 
   // Style features
-const getFeatureStyle = (feature?: PropertyFeature): PathOptions => {
-  // Fallback style if feature is undefined or properties are missing
-  const defaultStyle: PathOptions = {
-    color: "#3B82F6",
-    weight: 2,
-    opacity: 0.6,
-    fillColor: "#3B82F6",
-    fillOpacity: 0.3,
+  const getFeatureStyle = (feature?: PropertyFeature): PathOptions => {
+    // Fallback style if feature is undefined or properties are missing
+    const defaultStyle: PathOptions = {
+      color: "#3B82F6",
+      weight: 2,
+      opacity: 0.6,
+      fillColor: "#3B82F6",
+      fillOpacity: 0.3,
+    };
+
+    // Return default style if feature is undefined or lacks properties
+    if (!feature || !feature.properties) {
+      return defaultStyle;
+    }
+
+    const { unitType, condition } =
+      feature.properties as PropertyFeature["properties"];
+    let color = "#3B82F6";
+
+    switch (unitType?.toLowerCase()) {
+      case "Residential":
+        color = "#10B981";
+        break;
+      case "Commercial":
+        color = "#F59E0B";
+        break;
+      case "Industrial":
+        color = "#8B5CF6";
+        break;
+      case "Mixed Use":
+        color = "#EF4444";
+        break;
+      case "Agricultural":
+        color = "#84CC16";
+        break;
+      default:
+        color = "#3B82F6"; // Fallback color for unknown unitType
+    }
+
+    return {
+      color,
+      weight: 2,
+      opacity: condition?.toLowerCase() === "available" ? 1 : 0.6,
+      fillColor: color,
+      fillOpacity: condition?.toLowerCase() === "available" ? 0.3 : 0.1,
+    };
   };
-
-  // Return default style if feature is undefined or lacks properties
-  if (!feature || !feature.properties) {
-    return defaultStyle;
-  }
-
-  const { unitType, condition } = feature.properties as PropertyFeature["properties"];
-  let color = "#3B82F6";
-
-  switch (unitType?.toLowerCase()) {
-    case "residential":
-      color = "#10B981";
-      break;
-    case "commercial":
-      color = "#F59E0B";
-      break;
-    case "industrial":
-      color = "#8B5CF6";
-      break;
-    case "mixed use":
-      color = "#EF4444";
-      break;
-    case "agricultural":
-      color = "#84CC16";
-      break;
-    default:
-      color = "#3B82F6"; // Fallback color for unknown unitType
-  }
-
-  return {
-    color,
-    weight: 2,
-    opacity: condition?.toLowerCase() === "available" ? 1 : 0.6,
-    fillColor: color,
-    fillOpacity: condition?.toLowerCase() === "available" ? 0.3 : 0.1,
-  };
-};
 
   // Attach events
   const onEachFeature = (feature: PropertyFeature, layer: Layer) => {
@@ -152,12 +138,12 @@ const getFeatureStyle = (feature?: PropertyFeature): PathOptions => {
         (layer as L.Path).setStyle(getFeatureStyle(feature));
       },
       click: (e: LeafletMouseEvent) => {
-        const popupId = `popup-${feature.properties.id}`;
-        const popup = L.popup({ maxWidth: 400, className: "property-popup" })
+        const popupId = `popup-${feature.properties.fid}`;
+        L.popup({ maxWidth: 400, className: "property-popup" })
           .setLatLng(e.latlng)
           .setContent(`<div id="${popupId}"></div>`)
           .openOn(e.target._map);
-        console.log(popup);
+        
 
         setTimeout(() => {
           const popupElement = document.getElementById(popupId);
@@ -202,6 +188,14 @@ const getFeatureStyle = (feature?: PropertyFeature): PathOptions => {
         <MapController
           center={proforceCityCenter}
           searchLocation={searchLocation}
+          debug={true}
+          animate={true}
+          centerZoom={14}
+          showMarker={true}
+          //   bounds={[
+          //     [6.97647, 3.64586],
+          //     [6.99647, 3.66586],
+          //   ]}
         />
       </MapContainer>
 
