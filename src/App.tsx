@@ -1,4 +1,5 @@
-import RealEstateMapApp from "./components/RealEstate";
+import RealEstateMapApp from "./components/RealEstateMapApp";
+
 
 const App = () => {
   return (
