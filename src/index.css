@@ -119,12 +119,23 @@
   }
 }
 
-.leaflet-popup-content {
-  width: 100% !important;  /* take full width */
+/* .leaflet-popup-content {
+  width: 100% !important; 
   margin: 0 !important;
 }
 
 .property-popup {
-  width: 400px;   /* match your React div width */
+  width: 400px;   
   max-width: 100%;
+} */
+
+.leaflet-popup-content {
+  padding: 8px 12px !important; /* tweak as you like */
+  margin: 0 !important; /* remove default margin */
+  font-size: 14px; /* optional: make text more readable */
+  line-height: 1.4;
+}
+
+.custom-popup .leaflet-popup-content {
+  width: 400px;
 }

@@ -153,7 +153,7 @@ const RealEstateMapApp = () => {
       },
       click: (e: LeafletMouseEvent) => {
         const popupId = `popup-${feature.properties.fid}`;
-        L.popup({ maxWidth: 400, className: "property-popup" })
+        L.popup({ className: "custom-popup" })
           .setLatLng(e.latlng)
           .setContent(`<div id="${popupId}"></div>`)
           .openOn(e.target._map);

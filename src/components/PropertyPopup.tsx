@@ -35,7 +35,7 @@ export const PropertyPopup = ({ feature }: PropertyPopupProps) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-md shadow-lg w-64">
+    <div className="bg-white p-4 rounded-md shadow-lg w-full">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-bold text-lg text-gray-900">{properties.unit}</h3>
         <Badge className={getStatusColor(properties.condition)}>
@@ -69,10 +69,11 @@ export const PropertyPopup = ({ feature }: PropertyPopupProps) => {
         <span className="text-xs text-gray-500 font-semibold">
           ID: {properties.id}
         </span>
-        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+        <Button size="sm" className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
           Contact: {properties.contact}
         </Button>
       </div>
     </div>
   );
 };
+
