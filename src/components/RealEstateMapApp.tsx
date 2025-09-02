@@ -9,11 +9,10 @@ import { MapSearchControl } from "../components/MapSearchControl";
 import { LayerControl } from "../components/LayerControl";
 import { MapController } from "../components/MapController";
 import { PropertyPopup } from "../components/PropertyPopup";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Home } from "lucide-react";
 import type { PropertyFeature, PropertyFeatureCollection } from "../../types";
 import "leaflet/dist/leaflet.css";
-import { motion } from "framer-motion";
+import PropertiesCard from "./PropertiesCard";
+import PropertyLegend from "./PropertyLegend";
 
 /* ---------------- Fix leaflet default marker icons ---------------- */
 delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
@@ -94,7 +93,7 @@ const RealEstateMapApp = () => {
     const { unitType, condition } = feature.properties;
     let color = "#3B82F6";
 
-     switch (unitType?.toLowerCase()) {
+    switch (unitType?.toLowerCase()) {
       case "residential":
         color = "#10B981";
         break;
@@ -224,59 +223,10 @@ const RealEstateMapApp = () => {
       />
 
       {/* Legend */}
-      <Card className="absolute bottom-10 left-4 z-[1000] w-48">
-        <CardHeader>
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Home className="w-4 h-4" /> Property Types
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {[
-            ["bg-green-500", "Residential"],
-            ["bg-orange-500", "Commercial"],
-            ["bg-purple-500", "Industrial"],
-            ["bg-red-500", "Mixed Use"],
-            ["bg-lime-500", "Agricultural"],
-          ].map(([color, label]) => (
-            <div key={label} className="flex items-center gap-2 text-xs">
-              <div className={`w-4 h-4 ${color} rounded`} />
-              <span>{label}</span>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      <PropertyLegend />
 
       {/* Property Count */}
-      {/* <Card className="absolute bottom-10 right-4 z-[1000]">
-        <CardContent className="p-2 cursor-pointer">
-          <div className="text-center">
-            <p className="text-lg font-bold text-blue-600">
-              {sampleGeoJSON.features.length}
-            </p>
-            <p className="text-sm text-gray-600">Properties Available</p>
-          </div>
-        </CardContent>
-      </Card> */}
-      <Card className="absolute bottom-10 right-4 z-[1000] shadow-xl rounded-2xl">
-      <CardContent className="p-4 cursor-pointer">
-        <div className="flex flex-col items-center justify-center space-y-1">
-          {/* Heartbeat animation */}
-          <motion.p
-            className="text-3xl font-extrabold text-blue-600"
-            animate={{ scale: [1, 1.2, 1, 1.2, 1] }}
-            transition={{
-              duration: 1.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            {sampleGeoJSON.features.length}
-          </motion.p>
-
-          <p className="text-sm text-gray-600">Properties Available</p>
-        </div>
-      </CardContent>
-    </Card>
+      <PropertiesCard sampleGeoJSON={sampleGeoJSON} />
     </div>
   );
 };
