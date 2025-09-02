@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Ruler, Calendar, Home, MapPin } from "lucide-react";
+import { DollarSign, Ruler, Calendar, Home, MapPin, Phone } from "lucide-react";
 import type { PropertyFeature } from "../../types";
 
 interface PropertyPopupProps {
@@ -35,7 +35,7 @@ export const PropertyPopup = ({ feature }: PropertyPopupProps) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-md shadow-lg w-full">
+    <div className="bg-white p-4 rounded-md w-full">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-bold text-lg text-gray-900">{properties.unit}</h3>
         <Badge className={getStatusColor(properties.condition)}>
@@ -59,21 +59,24 @@ export const PropertyPopup = ({ feature }: PropertyPopupProps) => {
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Calendar className="w-4 h-4 text-gray-500" />
-          <span>
-            Added: {new Date(properties.lastUpdated).toLocaleDateString()}
-          </span>
+          <span>Added: {properties.lastUpdated}</span>
         </div>
       </div>
       <p className="text-sm text-gray-600 mb-3">{properties.contact}</p>
-      <div className="flex items-center justify-between flex-col space-y-6">
-        <span className="text-xs text-gray-500 font-semibold">
+      <div className="flex items-start justify-between flex-col space-y-6">
+        <span className="text-xs text-gray-600 font-semibold">
           ID: {properties.id}
         </span>
-        <Button size="sm" className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
-          Contact: {properties.contact}
+        <Button
+          size="sm"
+          className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+        >
+          <span>
+            <Phone />
+          </span>
+          {properties.contact}
         </Button>
       </div>
     </div>
   );
 };
-

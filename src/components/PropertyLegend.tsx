@@ -15,12 +15,12 @@ export default function PropertyLegend() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="absolute bottom-10 left-4 z-[1000] flex items-end">
+    <div className="absolute bottom-10 left-4 z-[1000] flex items-end font-[kavoon]">
       {/* Desktop: always show legend */}
       <div className="hidden md:block">
         <Card className="w-48 transition-transform duration-300 ease-in-out hover:scale-105 cursor-pointer">
           <CardHeader>
-            <CardTitle className="text-sm flex items-center gap-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-gray-700">
               <Home className="w-4 h-4" /> Property Types
             </CardTitle>
           </CardHeader>
@@ -28,7 +28,7 @@ export default function PropertyLegend() {
             {propertyTypes.map(([color, label]) => (
               <div key={label} className="flex items-center gap-2 text-xs">
                 <div className={`w-4 h-4 ${color} rounded`} />
-                <span>{label}</span>
+                <span className="text-gray-700">{label}</span>
               </div>
             ))}
           </CardContent>

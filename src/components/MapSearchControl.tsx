@@ -115,7 +115,7 @@ export const MapSearchControl = ({
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           onFocus={() => searchQuery && setShowSuggestions(true)}
-          className="flex-1 bg-white shadow-lg md:w-64 w-36"
+          className="flex-1 bg-white shadow-lg md:w-64 w-44"
         />
         <Button
           onClick={handleSearch}
