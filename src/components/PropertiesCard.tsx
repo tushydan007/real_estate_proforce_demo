@@ -27,12 +27,12 @@ export default function PropertiesCard({ sampleGeoJSON }: PropertiesCardProps) {
   }, [total]);
 
   return (
-    <Card className="absolute bottom-10 right-4 z-[1000] shadow-2xl rounded-2xl backdrop-blur-sm bg-white/80">
-      <CardContent className="p-2 cursor-pointer">
-        <div className="flex flex-col items-center justify-center space-y-1">
+    <Card className="absolute bottom-10 right-4 z-[1000] shadow-2xl rounded-2xl backdrop-blur-sm bg-white/80 w-32 md:w-40">
+      <CardContent className="px-2 cursor-pointer">
+        <div className="flex flex-col items-center justify-center">
           {/* Heartbeat + Count-up */}
           <motion.p
-            className="md:text-3xl text-xl font-extrabold text-[#345332] drop-shadow-sm"
+            className="md:text-2xl lg:text-3xl text-lg font-extrabold text-[#345332] drop-shadow-sm"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{
               duration: 1,
@@ -43,7 +43,7 @@ export default function PropertiesCard({ sampleGeoJSON }: PropertiesCardProps) {
             {count}
           </motion.p>
 
-          <p className="text-sm font-medium text-gray-700">
+          <p className="text-xs md:text-sm font-medium text-gray-700">
             Properties Available
           </p>
         </div>
