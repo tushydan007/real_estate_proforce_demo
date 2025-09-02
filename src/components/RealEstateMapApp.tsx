@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Home } from "lucide-react";
 import type { PropertyFeature, PropertyFeatureCollection } from "../../types";
 import "leaflet/dist/leaflet.css";
+import { motion } from "framer-motion";
 
 /* ---------------- Fix leaflet default marker icons ---------------- */
 delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
@@ -90,28 +91,42 @@ const RealEstateMapApp = () => {
       return defaultStyle;
     }
 
-    const { unitType, condition } =
-      feature.properties as PropertyFeature["properties"];
+    const { unitType, condition } = feature.properties;
     let color = "#3B82F6";
 
-    switch (unitType?.toLowerCase()) {
-      case "Residential":
+     switch (unitType?.toLowerCase()) {
+      case "residential":
         color = "#10B981";
         break;
-      case "Commercial":
+      case "commercial":
         color = "#F59E0B";
         break;
-      case "Industrial":
+      case "industrial":
         color = "#8B5CF6";
         break;
-      case "Mixed Use":
+      case "mixed use":
         color = "#EF4444";
         break;
-      case "Agricultural":
+      case "agricultural":
         color = "#84CC16";
         break;
+      case "facility":
+        color = "#06B6D4";
+        break;
+      case "office block":
+        color = "#DC2626";
+        break;
+      case "administrative":
+        color = "#7C3AED";
+        break;
+      case "admin":
+        color = "#059669";
+        break;
+      case "security":
+        color = "#B91C1C";
+        break;
       default:
-        color = "#3B82F6"; // Fallback color for unknown unitType
+        color = "#3B82F6";
     }
 
     return {
@@ -143,7 +158,6 @@ const RealEstateMapApp = () => {
           .setLatLng(e.latlng)
           .setContent(`<div id="${popupId}"></div>`)
           .openOn(e.target._map);
-        
 
         setTimeout(() => {
           const popupElement = document.getElementById(popupId);
@@ -233,7 +247,7 @@ const RealEstateMapApp = () => {
       </Card>
 
       {/* Property Count */}
-      <Card className="absolute bottom-10 right-4 z-[1000]">
+      {/* <Card className="absolute bottom-10 right-4 z-[1000]">
         <CardContent className="p-2 cursor-pointer">
           <div className="text-center">
             <p className="text-lg font-bold text-blue-600">
@@ -242,7 +256,27 @@ const RealEstateMapApp = () => {
             <p className="text-sm text-gray-600">Properties Available</p>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
+      <Card className="absolute bottom-10 right-4 z-[1000] shadow-xl rounded-2xl">
+      <CardContent className="p-4 cursor-pointer">
+        <div className="flex flex-col items-center justify-center space-y-1">
+          {/* Heartbeat animation */}
+          <motion.p
+            className="text-3xl font-extrabold text-blue-600"
+            animate={{ scale: [1, 1.2, 1, 1.2, 1] }}
+            transition={{
+              duration: 1.2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            {sampleGeoJSON.features.length}
+          </motion.p>
+
+          <p className="text-sm text-gray-600">Properties Available</p>
+        </div>
+      </CardContent>
+    </Card>
     </div>
   );
 };
