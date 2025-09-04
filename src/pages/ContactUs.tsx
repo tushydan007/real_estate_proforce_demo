@@ -160,7 +160,7 @@ const ContactUs: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-70"
+              className="flex items-center justify-center cursor-pointer gap-2 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-70"
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">

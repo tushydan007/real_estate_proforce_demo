@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -178,12 +178,22 @@ export default function Login() {
 
           {/* Forgot password */}
           <div className="text-center">
-            <a
-              href="/password-reset"
-              className="text-sm text-blue-600 hover:underline"
-            >
-              Forgot password?
-            </a>
+            {/* Footer Links */}
+            <div className="flex flex-col items-center justify-between gap-2 pt-4 sm:flex-row sm:gap-6">
+              <Link
+                to="/password-reset"
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Forgot password?
+              </Link>
+              <Link
+                to="/register"
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Don’t have an account?{" "}
+                <span className="font-medium">Register</span>
+              </Link>
+            </div>
           </div>
         </form>
       </div>

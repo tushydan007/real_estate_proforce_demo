@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import client from "../lib/client";
 import { saveAuthToken, saveUser } from "../lib/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 // Define a type for API errors
@@ -162,6 +162,16 @@ export default function Register() {
             )}
           </button>
         </form>
+        {/* Footer with login link */}
+        <div className="mt-6 text-center text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-medium text-indigo-600 hover:text-indigo-500"
+          >
+            Log in
+          </Link>
+        </div>
       </div>
     </div>
   );
