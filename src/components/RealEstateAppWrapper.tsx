@@ -36,7 +36,7 @@ const RealEstateAppWrapper = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
+    <div className="relative w-full h-[calc(100vh-64px)] bg-black overflow-hidden">
       {/* Map */}
       <div
         className={`absolute inset-0 transition-opacity duration-1000 ${
