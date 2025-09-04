@@ -1,4 +1,4 @@
-import RealEstateAppWrapper from "@/components/RealEstateMapApp";
+import RealEstateAppWrapper from "@/components/RealEstateAppWrapper";
 
 const MapPage = () => {
   return (

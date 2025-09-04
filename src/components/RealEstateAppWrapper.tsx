@@ -3,9 +3,9 @@ import Globe from "react-globe.gl";
 import type { GlobeMethods } from "react-globe.gl";
 import RealEstateMapApp from "./RealEstateMapApp";
 
+/* ---------------- Wrapper with 3D Globe Intro ---------------- */
 const RealEstateAppWrapper = () => {
-  const [showMap, setShowMap] = useState(false); // map becomes visible
-  const [hideGlobe, setHideGlobe] = useState(false); // globe fades out
+  const [showMap, setShowMap] = useState(false);
   const globeRef = useRef<GlobeMethods | undefined>(undefined);
 
   const targetLocation = { lat: 6.98647, lng: 3.65586 };
@@ -23,46 +23,27 @@ const RealEstateAppWrapper = () => {
         );
       }, 3000);
 
-      // Start showing map in background at 5s
+      // Show map after 6s
       setTimeout(() => {
         setShowMap(true);
-      }, 5000);
-
-      // Fade out globe after 6s
-      setTimeout(() => {
-        setHideGlobe(true);
       }, 6000);
     }
   }, []);
 
-  return (
-    <div className="relative w-full h-[calc(100vh-64px)] bg-black overflow-hidden">
-      {/* Map */}
-      <div
-        className={`absolute inset-0 transition-opacity duration-1000 ${
-          showMap ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <RealEstateMapApp />
-      </div>
+  if (showMap) return <RealEstateMapApp />;
 
-      {/* Globe */}
-      <div
-        className={`absolute inset-0 transition-opacity duration-1500 ${
-          hideGlobe ? "opacity-0" : "opacity-100"
-        }`}
-      >
-        <Globe
-          ref={globeRef}
-          width={window.innerWidth}
-          height={window.innerHeight}
-          globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
-          bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
-          backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
-        />
-        <div className="absolute top-4 left-4 text-white text-lg font-bold">
-          🌍 Loading Map...
-        </div>
+  return (
+    <div className="w-full h-screen bg-black">
+      <Globe
+        ref={globeRef}
+        width={window.innerWidth}
+        height={window.innerHeight}
+        globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
+        bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
+      />
+      <div className="absolute top-4 left-4 text-white text-lg font-bold">
+        🌍 Loading Map...
       </div>
     </div>
   );

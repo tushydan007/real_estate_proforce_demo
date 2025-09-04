@@ -1,63 +1,192 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
 import client from "../lib/client";
 import { saveAuthToken, saveUser } from "../lib/auth";
-import { useNavigate } from "react-router-dom";
+import type { AxiosError } from "axios";
+
+// Zod validation schema
+const loginSchema = z.object({
+  username: z.string().min(1, "Username or email is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Login() {
-  const [form, setForm] = useState({ username: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const nav = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  async function onSubmit(data: LoginFormData) {
     try {
-      const res = await client.post("/api/auth/login/", form);
-      const data = res.data;
-      const token = data?.key || data?.token || data?.access;
+      const res = await client.post("/api/auth/login/", data);
+      const result = res.data;
+      const token = result?.key || result?.token || result?.access;
+
       if (token) saveAuthToken(token);
-      if (data?.user) saveUser(data.user);
+      if (result?.user) saveUser(result.user);
+
+      toast.success("Login successful 🎉");
       nav("/dashboard");
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.detail ||
-          JSON.stringify(err?.response?.data) ||
-          String(err)
-      );
-    } finally {
-      setLoading(false);
+    } catch (err: unknown) {
+      let errorMsg = "Something went wrong. Please try again.";
+
+      if ((err as AxiosError)?.isAxiosError) {
+        const axiosErr = err as AxiosError<{ detail?: string }>;
+        errorMsg =
+          axiosErr.response?.data?.detail ||
+          JSON.stringify(axiosErr.response?.data) ||
+          axiosErr.message;
+      }
+
+      toast.error(errorMsg);
     }
   }
 
   return (
-    <div className="max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Login</h2>
-      <form onSubmit={submit} className="space-y-4 bg-white p-6 rounded shadow">
-        <input
-          value={form.username}
-          onChange={(e) => setForm({ ...form, username: e.target.value })}
-          placeholder="Username or email"
-          className="w-full input"
-        />
-        <input
-          type="password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          placeholder="Password"
-          className="w-full input"
-        />
-        <div className="flex justify-between items-center">
-          <button className="btn-primary" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+        <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">
+          Login
+        </h2>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* Username / Email */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Username or Email
+            </label>
+            <input
+              type="text"
+              {...register("username")}
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500"
+              placeholder="Enter your username or email"
+            />
+            {errors.username && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.username.message}
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <div className="relative mt-1">
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register("password")}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 shadow-sm focus:border-green-500 focus:ring-green-500"
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  // Eye off icon
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-4.477-10-10 0-1.485.324-2.892.9-4.125M4.22 4.22l15.56 15.56M9.88 9.88A3 3 0 0114.12 14.12"
+                    />
+                  </svg>
+                ) : (
+                  // Eye icon
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-black px-4 py-2 font-semibold text-white shadow hover:bg-black/80 disabled:opacity-60"
+          >
+            {isSubmitting && (
+              <svg
+                className="h-5 w-5 animate-spin text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                ></path>
+              </svg>
+            )}
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
-          <a href="/password-reset" className="text-sm">
-            Forgot?
-          </a>
-        </div>
-        {error && <div className="text-sm text-red-600">{error}</div>}
-      </form>
+
+          {/* Forgot password */}
+          <div className="text-center">
+            <a
+              href="/password-reset"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              Forgot password?
+            </a>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

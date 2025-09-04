@@ -7,25 +7,38 @@ import type { Plan } from "@/types";
 // For demo we can hardcode plans; in prod fetch from /api/plans/
 const defaultPlans: Plan[] = [
   {
-    id: "free",
-    name: "Free Trial (7 days)",
-    price_display: "$0 / 7 days",
-    price_cents: 0,
-    features: ["7-day trial", "Basic features"],
+    id: "basic",
+    name: "Basic",
+    description: "Great for individuals just getting started.",
+    price_display: "$9/month",
+    price_cents: 900,
+    features: ["Access to core features", "Email support", "1 GB storage"],
   },
   {
     id: "pro",
     name: "Pro",
-    price_display: "$9.99 / month",
-    price_cents: 999,
-    features: ["Feature A", "Feature B"],
+    description: "Perfect for professionals who need more power.",
+    price_display: "$29/month",
+    price_cents: 2900,
+    features: [
+      "Everything in Basic",
+      "Priority support",
+      "50 GB storage",
+      "Advanced analytics",
+    ],
   },
   {
-    id: "business",
-    name: "Business",
-    price_display: "$29.99 / month",
-    price_cents: 2999,
-    features: ["All Pro features", "Team seats"],
+    id: "enterprise",
+    name: "Enterprise",
+    description: "Custom solutions for large teams & businesses.",
+    price_display: "Contact us",
+    price_cents: 0,
+    features: [
+      "Unlimited storage",
+      "Dedicated account manager",
+      "24/7 support",
+      "Custom integrations",
+    ],
   },
 ];
 
@@ -34,9 +47,12 @@ export default function Subscription() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const nav = useNavigate();
 
+  console.log(nav);
+  console.log(loadingPlan);
+
   useEffect(() => {
     // optionally fetch plans from backend:
-    // client.get("/api/plans/").then(res => setPlans(res.data));
+    client.get("/api/plans/").then((res) => setPlans(res.data));
   }, []);
 
   async function handleChoose(planId: string) {
@@ -110,10 +126,26 @@ export default function Subscription() {
   }
 
   return (
-    <div className="grid md:grid-cols-3 gap-6">
-      {plans.map((p) => (
-        <PlanCard key={p.id} plan={p} onChoose={handleChoose} />
-      ))}
-    </div>
+    <section className="py-16 bg-gray-50">
+      {/* Section Heading */}
+      <div className="max-w-3xl mx-auto text-center mb-12">
+        <h2 className="text-4xl font-bold text-gray-800">
+          Choose the Right Plan for You
+        </h2>
+        <p className="mt-4 text-lg text-gray-600">
+          Our subscription options are designed to fit your needs, whether
+          you’re just starting out, scaling your business, or running a large
+          enterprise. Select a plan that matches your goals and unlock the tools
+          you need to succeed.
+        </p>
+      </div>
+
+      {/* Plan Cards */}
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+        {plans.map((plan) => (
+          <PlanCard key={plan.id} plan={plan} onChoose={handleChoose} />
+        ))}
+      </div>
+    </section>
   );
 }
