@@ -24,7 +24,7 @@ const HowItWorks = () => {
               <span className="block text-4xl font-bold text-blue-600 mb-4 font-[kavoon]">
                 {idx + 1}
               </span>
-              <p className="text-gray-700 font-[kavoon]">{step}</p>
+              <p className="text-gray-700">{step}</p>
             </motion.div>
           ))}
         </div>

@@ -10,7 +10,7 @@ import type { AxiosError } from "axios";
 
 // Zod validation schema
 const loginSchema = z.object({
-  username: z.string().min(1, "Username or email is required"),
+  email: z.string().min(1, "Email is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -28,14 +28,14 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  async function onSubmit(data: LoginFormData) {
+  async function onSubmit(FormValues: LoginFormData) {
     try {
-      const res = await client.post("/api/auth/login/", data);
-      const result = res.data;
-      const token = result?.key || result?.token || result?.access;
+      const { data } = await client.post("/api/auth/login/", FormValues);
+      const token = data?.key || data?.token || data?.access;
 
       if (token) saveAuthToken(token);
-      if (result?.user) saveUser(result.user);
+      if (data?.user) saveUser(data.user);
+      console.log(FormValues);
 
       toast.success("Login successful 🎉");
       nav("/dashboard");
@@ -43,11 +43,19 @@ export default function Login() {
       let errorMsg = "Something went wrong. Please try again.";
 
       if ((err as AxiosError)?.isAxiosError) {
-        const axiosErr = err as AxiosError<{ detail?: string }>;
-        errorMsg =
-          axiosErr.response?.data?.detail ||
-          JSON.stringify(axiosErr.response?.data) ||
-          axiosErr.message;
+        const axiosErr = err as AxiosError<{
+          detail?: string;
+          non_field_errors?: string[];
+        }>;
+        const respData = axiosErr.response?.data;
+
+        if (respData?.detail) {
+          errorMsg = respData.detail;
+        } else if (Array.isArray(respData?.non_field_errors)) {
+          errorMsg = respData.non_field_errors[0];
+        } else {
+          errorMsg = axiosErr.message;
+        }
       }
 
       toast.error(errorMsg);
@@ -69,13 +77,13 @@ export default function Login() {
             </label>
             <input
               type="text"
-              {...register("username")}
+              {...register("email")}
               className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500"
-              placeholder="Enter your username or email"
+              placeholder="Enter your email"
             />
-            {errors.username && (
+            {errors.email && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.username.message}
+                {errors.email.message}
               </p>
             )}
           </div>

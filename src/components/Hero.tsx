@@ -84,7 +84,10 @@ const Hero = () => {
           monitor, analyze, and protect your assets in real time.
         </p>
         <Link to="/register">
-          <Button size="lg" className="cursor-pointer bg-white text-black hover:bg-gray-200">
+          <Button
+            size="lg"
+            className="cursor-pointer bg-white text-black hover:bg-gray-200"
+          >
             Start Free Trial
           </Button>
         </Link>
@@ -113,5 +116,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
-

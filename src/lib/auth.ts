@@ -1,5 +1,5 @@
-const TOKEN_KEY = "saas_auth_token";
-const USER_KEY = "saas_user";
+const TOKEN_KEY = "auth_token";
+const USER_KEY = "user";
 import type { User } from "@/types";
 
 export function saveAuthToken(token: string) {

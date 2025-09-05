@@ -23,7 +23,7 @@ const Features = () => {
             <motion.div
               key={idx}
               whileHover={{ scale: 1.05 }}
-              className="bg-white p-6 rounded-2xl shadow-lg font-[kavoon]"
+              className="bg-white p-6 rounded-2xl shadow-lg"
             >
               <h3 className="text-xl font-semibold mb-3">{f.title}</h3>
               <p className="text-gray-600">{f.desc}</p>
