@@ -18,7 +18,7 @@ export default function Home() {
   }, [nav]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-black">
       {/* Hero Section */}
       <Hero />
       {/* Features Section */}

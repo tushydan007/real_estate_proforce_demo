@@ -79,10 +79,10 @@ export default function AboutUs() {
       </section>
 
       {/* Our Story */}
-      <section className="w-full py-16 px-4 md:px-8 lg:px-16 bg-background">
+      <section className="w-full py-16 px-4 md:px-8 lg:px-16 bg-black border-b border-gray-700">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Our Story</h2>
-          <p className="text-muted-foreground leading-relaxed">
+          <h2 className="text-3xl font-bold mb-6 text-white">Our Story</h2>
+          <p className="text-gray-200 leading-relaxed">
             Founded with a vision to bridge the gap between space technology and
             businesses on Earth, we’ve grown into a trusted partner for
             organizations worldwide. Our platform empowers clients to harness
@@ -124,10 +124,10 @@ export default function AboutUs() {
       </section>
 
       {/* Meet the Team */}
-      <section className="w-full py-16 px-4 md:px-8 lg:px-16 bg-background">
+      <section className="w-full py-16 px-4 md:px-8 lg:px-16  border-b border-gray-700">
         <div className="max-w-6xl mx-auto text-center mb-12">
-          <h2 className="text-3xl font-bold mb-6">Meet the Team</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold mb-6 text-black">Meet the Team</h2>
+          <p className="text-gray-500 max-w-2xl mx-auto">
             A passionate team of experts dedicated to transforming how the world
             monitors and manages assets from space.
           </p>
@@ -147,20 +147,20 @@ export default function AboutUs() {
                 alt={member.name}
                 className="w-40 h-40 rounded-full object-cover mb-4 border-4 border-primary/20"
               />
-              <h3 className="text-lg font-semibold">{member.name}</h3>
-              <p className="text-muted-foreground">{member.role}</p>
+              <h3 className="text-lg font-semibold text-white">{member.name}</h3>
+              <p className="text-gray-500">{member.role}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
       {/* Why Choose Us */}
-      <section className="w-full py-20 px-4 md:px-8 lg:px-16 bg-muted/30">
+      <section className="w-full py-20 px-4 md:px-8 lg:px-16 bg-black">
         <div className="max-w-6xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-gray-200">
             Why Choose Us?
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-gray-400 max-w-2xl mx-auto">
             Trusted by clients worldwide, we deliver reliability, accuracy, and
             innovation that set us apart.
           </p>
@@ -177,10 +177,10 @@ export default function AboutUs() {
               viewport={{ once: true }}
               className="text-center"
             >
-              <p className="text-4xl font-extrabold text-primary">
+              <p className="text-4xl font-extrabold text-gray-200">
                 {stat.value}
               </p>
-              <p className="text-muted-foreground mt-2">{stat.label}</p>
+              <p className="text-gray-200 mt-2">{stat.label}</p>
             </motion.div>
           ))}
         </div>
@@ -189,7 +189,7 @@ export default function AboutUs() {
         <div className="text-center">
           <Button
             size="lg"
-            className="rounded-full px-8 py-6 text-lg shadow-md"
+            className="rounded-full cursor-pointer px-8 py-6 text-base text-black bg-white hover:bg-white/80 shadow-md"
           >
             Join Our Journey
           </Button>

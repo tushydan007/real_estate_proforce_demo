@@ -12,7 +12,7 @@ const defaultPlans: Plan[] = [
     description: "Great for individuals just getting started.",
     price_display: "$9/month",
     price_cents: 900,
-    features: ["Access to core features", "Email support", "1 GB storage"],
+    features: ["Access to core features", "Basic Analytics", "Email support", "1 GB storage"],
   },
   {
     id: "pro",
@@ -126,13 +126,13 @@ export default function Subscription() {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-black min-h-screen">
       {/* Section Heading */}
-      <div className="max-w-3xl mx-auto text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-800">
+      <div className="max-w-3xl mx-auto text-center mb-12 md:pt-16">
+        <h2 className="text-4xl font-bold text-gray-200">
           Choose the Right Plan for You
         </h2>
-        <p className="mt-4 text-lg text-gray-600">
+        <p className="mt-4 text-lg text-gray-200">
           Our subscription options are designed to fit your needs, whether
           you’re just starting out, scaling your business, or running a large
           enterprise. Select a plan that matches your goals and unlock the tools

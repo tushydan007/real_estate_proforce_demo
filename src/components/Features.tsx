@@ -337,7 +337,7 @@ export default function Features() {
   const y2 = useTransform(scrollYProgress, [0, 1], [0, -120]);
 
   return (
-    <div ref={containerRef} className="relative overflow-hidden">
+    <div ref={containerRef} className="relative overflow-hidden border-b border-gray-700">
       {/* Starfield background with parallax */}
       <motion.div
         style={{ y: y1 }}
@@ -376,7 +376,7 @@ export default function Features() {
               >
                 <Card className="h-full border border-gray-700 bg-gray-900/70 backdrop-blur-md shadow-lg hover:shadow-xl transition-shadow rounded-2xl">
                   <CardHeader>
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/20 text-primary mb-4 mx-auto">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/80 text-white mb-4 mx-auto">
                       <Icon className="w-6 h-6" />
                     </div>
                     <CardTitle className="text-lg font-semibold text-center text-white">
@@ -396,7 +396,7 @@ export default function Features() {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="relative w-full py-20 px-4 md:px-8 lg:px-16 bg-black/70 backdrop-blur-sm">
+      <section className="relative w-full py-16 px-4 md:px-8 lg:px-16 bg-black/70 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white">
             Why Choose Us?
@@ -429,7 +429,7 @@ export default function Features() {
         <div className="text-center">
           <Button
             size="lg"
-            className="rounded-full px-8 py-6 text-lg shadow-md bg-primary hover:bg-primary/90 transition-colors"
+            className="rounded-full px-8 py-6 text-base shadow-md bg-white text-black hover:bg-white/80 transition-colors"
           >
             Get Started Today
           </Button>

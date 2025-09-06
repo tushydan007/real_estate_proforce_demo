@@ -40,16 +40,16 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <Card className="w-full max-w-md shadow-lg">
+    <div className="flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8 bg-black">
+      <Card className="w-full max-w-md shadow-lg bg-[#0C111C] border-none">
         {!success ? (
           <>
             {/* Reset Form */}
             <CardHeader>
-              <CardTitle className="text-center text-2xl font-bold">
+              <CardTitle className="text-center text-2xl font-bold text-gray-200">
                 Reset Your Password
               </CardTitle>
-              <p className="text-center text-sm text-gray-500 mt-1">
+              <p className="text-center text-sm text-gray-400 mt-1">
                 Enter your email address and we’ll send you a link to reset your
                 password.
               </p>
@@ -66,10 +66,11 @@ export default function ForgotPassword() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
+                    className="text-gray-200 border border-gray-400 shadow-md focus:ring-gray-300 focus:outline-none focus:ring-2"
                   />
                 </div>
 
-                <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
+                <Button type="submit" className="w-full cursor-pointer bg-white text-black hover:bg-white/80" disabled={loading}>
                   {loading ? "Sending..." : "Send Reset Email"}
                 </Button>
 

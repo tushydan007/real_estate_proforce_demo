@@ -39,7 +39,7 @@ const ContactUs: React.FC = () => {
     try {
       // Replace with API call
       await new Promise((resolve) => setTimeout(resolve, 1200));
-      console.log(data)
+      console.log(data);
       toast.success("Message sent successfully 🎉");
       reset();
     } catch (error) {
@@ -50,7 +50,7 @@ const ContactUs: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 flex flex-col">
+    <div className="min-h-screen text-gray-800 flex flex-col bg-black">
       {/* Header */}
       <div className="bg-black/70 backdrop-blur-sm text-white py-12 text-center">
         <h1 className="text-4xl font-bold">Contact Us</h1>
@@ -63,28 +63,28 @@ const ContactUs: React.FC = () => {
       <div className="flex flex-col lg:flex-row gap-10 px-6 lg:px-20 py-12">
         {/* Left: Contact Info */}
         <div className="lg:w-1/2 space-y-8">
-          <h2 className="text-2xl font-semibold">Our Office</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl font-semibold text-gray-200">Our Office</h2>
+          <p className="text-gray-200">
             Visit us at our office or connect with us through email or phone.
           </p>
-          <div className="space-y-4">
+          <div className="space-y-4 text-gray-200">
             <div className="flex items-start gap-3">
-              <MapPin className="text-black/70 backdrop-blur-sm w-6 h-6" />
+              <MapPin className="backdrop-blur-sm w-6 h-6" />
               <p>
                 1 Akaka Junction, Ode Remo,
                 <br /> Ogun State, Nigeria
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Phone className="text-black/70 backdrop-blur-sm w-6 h-6" />
+              <Phone className="backdrop-blur-sm w-6 h-6" />
               <p>+234 800 123 4567</p>
             </div>
             <div className="flex items-center gap-3">
-              <Mail className="text-black/70 backdrop-blur-sm w-6 h-6" />
+              <Mail className="backdrop-blur-sm w-6 h-6" />
               <p>support@proforcegalaxies.com</p>
             </div>
             <div className="flex items-center gap-3">
-              <Clock className="text-black/70 backdrop-blur-sm w-6 h-6" />
+              <Clock className="backdrop-blur-sm w-6 h-6" />
               <p>Mon - Sat: 9:00 AM - 6:00 PM</p>
             </div>
           </div>
@@ -109,7 +109,7 @@ const ContactUs: React.FC = () => {
         </div>
 
         {/* Right: Contact Form */}
-        <div className="lg:w-1/2 bg-white shadow-lg rounded-lg p-6 space-y-6">
+        <div className="lg:w-1/2 bg-[#0C111C] text-gray-200 shadow-lg rounded-lg p-6 space-y-6">
           <h2 className="text-2xl font-semibold">Send us a message</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
@@ -118,7 +118,7 @@ const ContactUs: React.FC = () => {
                 type="text"
                 {...register("name")}
                 placeholder="Your name"
-                className="w-full mt-1 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 border border-gray-400 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-300"
               />
               {errors.name && (
                 <p className="text-sm text-red-600 mt-1">
@@ -133,7 +133,7 @@ const ContactUs: React.FC = () => {
                 type="email"
                 {...register("email")}
                 placeholder="you@example.com"
-                className="w-full mt-1 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 border border-gray-400 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-300"
               />
               {errors.email && (
                 <p className="text-sm text-red-600 mt-1">
@@ -148,7 +148,7 @@ const ContactUs: React.FC = () => {
                 rows={5}
                 {...register("message")}
                 placeholder="Your message..."
-                className="w-full mt-1 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full mt-1 border border-gray-400 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-300"
               ></textarea>
               {errors.message && (
                 <p className="text-sm text-red-600 mt-1">
@@ -160,7 +160,7 @@ const ContactUs: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center justify-center cursor-pointer gap-2 w-full bg-black/70 backdrop-blur-sm text-white py-3 rounded-lg font-semibold hover:bg-black/80 transition disabled:opacity-70"
+              className="flex items-center justify-center cursor-pointer gap-2 w-full bg-white backdrop-blur-sm text-black py-3 rounded-lg font-semibold hover:bg-white/80 transition disabled:opacity-70"
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">

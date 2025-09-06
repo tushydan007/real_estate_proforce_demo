@@ -68,12 +68,15 @@ export default function Register() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-50 px-4">
-      <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
+    <div className="flex items-center justify-center min-h-screen px-4 bg-black">
+      <div className="w-full max-w-md p-6 rounded-2xl shadow-lg bg-[#0C111C] text-gray-200">
         <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Username */}
           <div>
+            <label className="block text-sm font-medium text-gray-200 mb-1">
+              Username
+            </label>
             <input
               {...register("username")}
               placeholder="Username"
@@ -88,6 +91,9 @@ export default function Register() {
 
           {/* Email */}
           <div>
+            <label className="block text-sm font-medium text-gray-200 mb-1">
+              Email
+            </label>
             <input
               {...register("email")}
               placeholder="Email"
@@ -102,6 +108,9 @@ export default function Register() {
 
           {/* Password */}
           <div>
+            <label className="block text-sm font-medium text-gray-200 mb-1">
+              Password
+            </label>
             <input
               type="password"
               {...register("password1")}
@@ -117,6 +126,9 @@ export default function Register() {
 
           {/* Confirm Password */}
           <div>
+            <label className="block text-sm font-medium text-gray-200 mb-1">
+              Confirm Password
+            </label>
             <input
               type="password"
               {...register("password2")}
@@ -134,7 +146,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-black hover:bg-black/80 text-white font-medium py-2 px-4 rounded-lg flex justify-center items-center cursor-pointer"
+            className="w-full bg-white hover:bg-white/80 text-black font-medium py-2 px-4 rounded-lg flex justify-center items-center cursor-pointer"
           >
             {loading ? (
               <svg
@@ -163,7 +175,7 @@ export default function Register() {
           </button>
         </form>
         {/* Footer with login link */}
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-6 text-center text-sm text-gray-400">
           Already have an account?{" "}
           <Link
             to="/login"
