@@ -140,12 +140,12 @@ export default function AboutUs() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2, duration: 0.6 }}
               viewport={{ once: true }}
-              className="flex flex-col items-center text-center"
+              className="flex flex-col items-center text-center rounded-lg coursor-pointer"
             >
               <img
                 src={member.image}
                 alt={member.name}
-                className="w-40 h-40 rounded-full object-cover mb-4 border-4 border-primary/20"
+                className="w-40 h-40 rounded-full object-cover mb-4 border-2 border-primary/20"
               />
               <h3 className="text-lg font-semibold text-white">{member.name}</h3>
               <p className="text-gray-500">{member.role}</p>
