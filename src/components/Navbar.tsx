@@ -16,15 +16,14 @@ const Navbar = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-12 text-gray-300 font-medium">
-          <NavLink to="/features" className="hover:text-blue-600">
-            Features
-          </NavLink>
-
           <NavLink to="/map-page" className="hover:text-blue-600">
             Map
           </NavLink>
           <NavLink to="/subscription" className="hover:text-blue-600">
             Plans
+          </NavLink>
+          <NavLink to="/about-us" className="hover:text-blue-600">
+            About-Us
           </NavLink>
           <NavLink to="/contact-us" className="hover:text-blue-600">
             Contact

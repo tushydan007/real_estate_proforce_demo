@@ -52,7 +52,7 @@ const ContactUs: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#1d50dd] to-[#4539ea] text-white py-12 text-center">
+      <div className="bg-black/70 backdrop-blur-sm text-white py-12 text-center">
         <h1 className="text-4xl font-bold">Contact Us</h1>
         <p className="mt-2 text-lg">
           We’d love to hear from you. Reach out anytime!
@@ -69,22 +69,22 @@ const ContactUs: React.FC = () => {
           </p>
           <div className="space-y-4">
             <div className="flex items-start gap-3">
-              <MapPin className="text-blue-600 w-6 h-6" />
+              <MapPin className="text-black/70 backdrop-blur-sm w-6 h-6" />
               <p>
                 1 Akaka Junction, Ode Remo,
                 <br /> Ogun State, Nigeria
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <Phone className="text-blue-600 w-6 h-6" />
+              <Phone className="text-black/70 backdrop-blur-sm w-6 h-6" />
               <p>+234 800 123 4567</p>
             </div>
             <div className="flex items-center gap-3">
-              <Mail className="text-blue-600 w-6 h-6" />
+              <Mail className="text-black/70 backdrop-blur-sm w-6 h-6" />
               <p>support@proforcegalaxies.com</p>
             </div>
             <div className="flex items-center gap-3">
-              <Clock className="text-blue-600 w-6 h-6" />
+              <Clock className="text-black/70 backdrop-blur-sm w-6 h-6" />
               <p>Mon - Sat: 9:00 AM - 6:00 PM</p>
             </div>
           </div>
@@ -160,7 +160,7 @@ const ContactUs: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center justify-center cursor-pointer gap-2 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-70"
+              className="flex items-center justify-center cursor-pointer gap-2 w-full bg-black/70 backdrop-blur-sm text-white py-3 rounded-lg font-semibold hover:bg-black/80 transition disabled:opacity-70"
             >
               {isSubmitting ? (
                 <span className="flex items-center gap-2">

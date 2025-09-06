@@ -69,7 +69,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import MapPage from "./pages/MapPage";
 import ContactUs from "./pages/ContactUs";
-import FeaturesPage from "./pages/Features";
+import AboutUs from "./components/AboutUs";
 
 const App = () => {
   return (
@@ -83,7 +83,7 @@ const App = () => {
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/password-reset" element={<ForgotPassword />} />
           <Route path="/contact-us" element={<ContactUs />} />
-          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/about-us" element={<AboutUs />} />
           <Route
             path="/dashboard"
             element={

@@ -279,6 +279,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Satellite, ShieldCheck, Activity, Cloud } from "lucide-react";
 
+
 type Feature = {
   id: number;
   title: string;
@@ -351,7 +352,7 @@ export default function Features() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80 pointer-events-none" />
 
       {/* Features Section */}
-      <section className="relative w-full py-16 px-4 md:px-8 lg:px-16">
+      <section className="relative w-full pt-16 pb-32 px-4 md:px-8 lg:px-16">
         <div className="max-w-6xl mx-auto text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-white">
             Powerful Features to Monitor Your Assets
@@ -418,9 +419,7 @@ export default function Features() {
               viewport={{ once: true }}
               className="text-center"
             >
-              <p className="text-4xl font-extrabold text-primary">
-                {stat.value}
-              </p>
+              <p className="text-4xl font-extrabold text-white">{stat.value}</p>
               <p className="text-gray-400 mt-2">{stat.label}</p>
             </motion.div>
           ))}
