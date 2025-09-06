@@ -69,6 +69,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import MapPage from "./pages/MapPage";
 import ContactUs from "./pages/ContactUs";
+import FeaturesPage from "./pages/Features";
 
 const App = () => {
   return (
@@ -81,13 +82,21 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/password-reset" element={<ForgotPassword />} />
-          <Route path="/map-page" element={<MapPage />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/features" element={<FeaturesPage />} />
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/map-page"
+            element={
+              <ProtectedRoute>
+                <MapPage />
               </ProtectedRoute>
             }
           />

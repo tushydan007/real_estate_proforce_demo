@@ -52,7 +52,7 @@ const ContactUs: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 flex flex-col">
       {/* Header */}
-      <div className="bg-blue-600 text-white py-12 text-center">
+      <div className="bg-gradient-to-r from-[#1d50dd] to-[#4539ea] text-white py-12 text-center">
         <h1 className="text-4xl font-bold">Contact Us</h1>
         <p className="mt-2 text-lg">
           We’d love to hear from you. Reach out anytime!

@@ -11,12 +11,12 @@ const Navbar = () => {
           to="/"
           className="font-normal text-2xl bg-gradient-to-r from-[#3B82F6] to-[#3f33ea] text-transparent bg-clip-text font-['kavoon']"
         >
-          PFG ASSET WATCH
+          ASSET WATCH
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex gap-6 text-gray-300 font-medium">
-          <NavLink to="#features" className="hover:text-blue-600">
+        <nav className="hidden md:flex gap-12 text-gray-300 font-medium">
+          <NavLink to="/features" className="hover:text-blue-600">
             Features
           </NavLink>
 

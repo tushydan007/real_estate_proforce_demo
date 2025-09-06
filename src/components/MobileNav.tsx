@@ -13,7 +13,7 @@ export function MobileNav() {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon">
-            <Menu className="h-6 w-6" />
+            <Menu className="h-6 w-6 text-white" />
             <span className="sr-only">Open menu</span>
           </Button>
         </SheetTrigger>
@@ -39,11 +39,11 @@ export function MobileNav() {
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="fixed top-0 right-0 z-50 h-full w-64 bg-white shadow-xl p-6 flex flex-col gap-6"
+                className="fixed top-0 right-0 z-50 h-screen w-64 bg-gray-100 shadow-xl p-6 flex flex-col gap-6"
               >
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-xl text-blue-700">
-                    Proforce Galaxies
+                  <span className="font-bold text-xl text-blue-700 font-['kavoon']">
+                    ASSET WATCH
                   </span>
                   <SheetClose asChild>
                     <Button
