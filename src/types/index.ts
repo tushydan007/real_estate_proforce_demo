@@ -36,11 +36,24 @@ export interface PaymentInitResponse {
   reference?: string; // Paystack
 }
 
-export interface Plan {
+// export interface Plan {
+//   id: string;
+//   name: string;
+//   price_display: string;
+//   price_cents: number;
+//   description?: string;
+//   features: string[];
+// }
+
+
+export type Plan = {
   id: string;
   name: string;
-  price_display: string;
-  price_cents: number;
   description?: string;
+  monthly_price_display: string;
+  monthly_price_cents: number;
+  yearly_price_display: string;
+  yearly_price_cents: number;
   features: string[];
-}
+  highlight?: boolean; // e.g. for "Best Value"
+};
