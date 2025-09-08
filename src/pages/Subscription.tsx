@@ -39,6 +39,10 @@ export default function Subscription() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
   const nav = useNavigate();
 
+
+  console.log(loadingPlan)
+  console.log(nav)
+
   useEffect(() => {
     client.get("/api/plans/").then((res) => setPlans(res.data));
   }, []);
