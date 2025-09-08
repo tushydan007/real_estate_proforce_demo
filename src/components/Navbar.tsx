@@ -17,7 +17,7 @@ const Navbar = () => {
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-12 text-gray-300 font-medium">
           <NavLink to="/map-page" className="hover:text-blue-600">
-            Map
+            Draw AOI
           </NavLink>
           <NavLink to="/subscription" className="hover:text-blue-600">
             Plans
