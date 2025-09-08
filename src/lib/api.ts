@@ -1,5 +1,10 @@
 // lib/api.ts
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
+import type { Aoi } from "./types";
+
+
+
+
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
@@ -35,12 +40,37 @@ export const api = axios.create({
   },
 });
 
+
+// AOI CRUD
+export async function getAois(): Promise<Aoi[]> {
+  const res = await api.get<Aoi[]>("/aois/");
+  return res.data;
+}
+
+export async function createAoi(aoi: Aoi): Promise<Aoi> {
+  const res = await api.post<Aoi>("/aois/", aoi);
+  return res.data;
+}
+
+export async function updateAoi(id: number, aoi: Aoi): Promise<Aoi> {
+  const res = await api.put<Aoi>(`/aois/${id}/`, aoi);
+  return res.data;
+}
+
+export async function deleteAoi(id: number): Promise<void> {
+  await api.delete(`/aois/${id}/`);
+}
+
 // Request interceptor: attach token
 api.interceptors.request.use((config) => {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  }
+  const csrf = localStorage.getItem("csrf_token");
+  if (csrf) {
+    config.headers["X-CSRFToken"] = csrf;
   }
   return config;
 });
@@ -110,34 +140,3 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-// // lib/api.ts
-// import axios from "axios";
-
-// // Create axios instance with default settings
-// export const api = axios.create({
-//   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api",
-//   withCredentials: true, // include cookies if using session auth
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
-
-// // Optional: request interceptor (e.g., add token if using JWT)
-// api.interceptors.request.use((config) => {
-//   const token =
-//     typeof window !== "undefined" ? localStorage.getItem("token") : null;
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
-
-// // Optional: response interceptor for errors
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     console.error("API Error:", error.response?.data || error.message);
-//     return Promise.reject(error);
-//   }
-// );

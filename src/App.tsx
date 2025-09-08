@@ -70,6 +70,7 @@ import Footer from "./components/Footer";
 import MapPage from "./pages/MapPage";
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./components/AboutUs";
+import UserAoi from "./pages/UserAoi";
 
 const App = () => {
   return (
@@ -93,11 +94,19 @@ const App = () => {
             }
           />
           <Route
-            path="/map-page"
+            path="/user-aoi"
             element={
               <ProtectedRoute>
-                <MapPage />
+                <UserAoi />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/map-page"
+            element={
+              // <ProtectedRoute>
+              <MapPage />
+              // </ProtectedRoute>
             }
           />
           <Route path="/subscription" element={<Subscription />} />
