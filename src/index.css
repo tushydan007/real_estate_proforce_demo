@@ -120,16 +120,6 @@
   }
 }
 
-/* .leaflet-popup-content {
-  width: 100% !important; 
-  margin: 0 !important;
-}
-
-.property-popup {
-  width: 400px;   
-  max-width: 100%;
-} */
-
 .leaflet-popup-content {
   padding: 8px 12px !important; /* tweak as you like */
   margin: 0 !important; /* remove default margin */
