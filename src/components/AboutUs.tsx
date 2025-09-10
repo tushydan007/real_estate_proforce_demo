@@ -28,21 +28,21 @@ const values = [
 const team = [
   {
     id: 1,
-    name: "Jane Doe",
+    name: "Engr. Ade Ogundeyin",
     role: "CEO & Founder",
-    image: "/assets/team/jane.jpg", // place your images in public/assets/team
+    image: "/assets/team/gmd.jpg", // place your images in public/assets/team
   },
   {
     id: 2,
-    name: "John Smith",
+    name: "Engr. Temitope Robert",
     role: "CTO",
     image: "/assets/team/john.jpg",
   },
   {
     id: 3,
-    name: "Emily Davis",
+    name: "Ayobami Ogundeyin",
     role: "Head of Product",
-    image: "/assets/team/emily.jpg",
+    image: "/assets/team/hoo.jpg",
   },
 ];
 
@@ -113,10 +113,14 @@ export default function AboutUs() {
             >
               <Card className="h-full shadow-sm hover:shadow-md transition-shadow rounded-xl bg-[#0C111C] border border-gray-600 py-12">
                 <CardHeader>
-                  <CardTitle className="text-xl text-gray-200 text-center">{value.title}</CardTitle>
+                  <CardTitle className="text-xl text-gray-200 text-center">
+                    {value.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-200 text-center">{value.description}</p>
+                  <p className="text-gray-200 text-center">
+                    {value.description}
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -148,7 +152,9 @@ export default function AboutUs() {
                 alt={member.name}
                 className="w-40 h-40 rounded-full object-cover mb-4 border-2 border-primary/20"
               />
-              <h3 className="text-lg font-semibold text-white">{member.name}</h3>
+              <h3 className="text-lg font-semibold text-white">
+                {member.name}
+              </h3>
               <p className="text-gray-500">{member.role}</p>
             </motion.div>
           ))}
