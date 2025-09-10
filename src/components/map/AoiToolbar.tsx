@@ -9,7 +9,10 @@ interface AoiToolbarProps {
   map: Map;
   aois: Aoi[];
   onCreate: (geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon) => void;
-  onEdit: (id: number, geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon) => void;
+  onEdit: (
+    id: number,
+    geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon
+  ) => void;
   onDelete: (id: number) => void;
   onSelect: (id: number) => void;
   previewAoiId?: number;
@@ -36,8 +39,12 @@ export const AoiToolbar = ({
 
   return (
     <div className="absolute top-4 left-4 flex flex-col gap-2 bg-white/90 p-3 rounded-xl shadow z-[1000]">
-      <Button size="sm" onClick={startPolygon}>Draw Polygon</Button>
-      <Button size="sm" onClick={startRectangle}>Draw Rectangle</Button>
+      <Button size="sm" onClick={startPolygon}>
+        Draw Polygon
+      </Button>
+      <Button size="sm" onClick={startRectangle}>
+        Draw Rectangle
+      </Button>
     </div>
   );
 };

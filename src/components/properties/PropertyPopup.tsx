@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Ruler, Calendar, Home, MapPin, Phone } from "lucide-react";
-import type { PropertyFeature } from "../../types";
+import type { PropertyFeature } from "../../../types";
 
 interface PropertyPopupProps {
   feature: PropertyFeature;

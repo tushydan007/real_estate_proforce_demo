@@ -213,6 +213,35 @@ export const useAoiLayer = ({
     });
   }, [aois, onSelect, previewAoiId]);
 
-  return drawnItemsRef;
-};
+  const startPolygon = () => {
+    if (!map) return;
+    const drawer = new L.Draw.Polygon(map as unknown as L.DrawMap, {
+      shapeOptions: {
+        color: "blue",
+        weight: 2,
+        fillOpacity: 0.2,
+      },
+      allowIntersection: false,
+      showArea: true,
+    });
+    drawer.enable();
+  };
 
+  const startRectangle = () => {
+    if (!map) return;
+    const drawer = new L.Draw.Rectangle(map as unknown as L.DrawMap, {
+      shapeOptions: {
+        color: "blue",
+        weight: 2,
+        fillOpacity: 0.2,
+      },
+    });
+    drawer.enable();
+  };
+
+  return {
+    drawnItemsRef,
+    startPolygon,
+    startRectangle,
+  };
+};

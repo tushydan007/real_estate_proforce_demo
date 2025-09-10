@@ -1,12 +1,7 @@
 // src/components/map/DrawControl.tsx
 "use client";
 
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-} from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import L, { FeatureGroup, Layer } from "leaflet";
 import "leaflet-draw";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -21,7 +16,10 @@ export type DrawControlHandle = {
 interface DrawControlProps {
   aois: Aoi[];
   onCreate: (geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon) => void;
-  onEdit: (id: number, geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon) => void;
+  onEdit: (
+    id: number,
+    geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon
+  ) => void;
   onDelete: (id: number) => void;
   onSelect: (id: number) => void;
   previewAoiId?: number;
@@ -100,15 +98,18 @@ const DrawControl = forwardRef<DrawControlHandle, DrawControlProps>(
 
       map.addControl(drawControlRef.current);
 
-      polygonDrawRef.current = new L.Draw.Polygon(map, {
+      polygonDrawRef.current = new L.Draw.Polygon(map as unknown as L.DrawMap, {
         shapeOptions: defaultShapeOptions,
         allowIntersection: false,
         showArea: true,
       });
 
-      rectangleDrawRef.current = new L.Draw.Rectangle(map, {
-        shapeOptions: defaultShapeOptions,
-      });
+      rectangleDrawRef.current = new L.Draw.Rectangle(
+        map as unknown as L.DrawMap,
+        {
+          shapeOptions: defaultShapeOptions,
+        }
+      );
 
       return () => {
         if (drawControlRef.current) {
@@ -126,15 +127,9 @@ const DrawControl = forwardRef<DrawControlHandle, DrawControlProps>(
         const layer = evt.layer;
         drawnItemsRef.current?.addLayer(layer);
 
-        if (
-          evt.layerType === "polygon" ||
-          evt.layerType === "rectangle"
-        ) {
-          const geoJson = (layer as L.Polygon | L.Rectangle)
-            .toGeoJSON().geometry as
-            | GeoJSON.Polygon
-            | GeoJSON.MultiPolygon
-            | undefined;
+        if (evt.layerType === "polygon" || evt.layerType === "rectangle") {
+          const geoJson = (layer as L.Polygon | L.Rectangle).toGeoJSON()
+            .geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon | undefined;
 
           if (isValidGeoJsonGeometry(geoJson)) {
             onCreate(geoJson);
@@ -145,12 +140,15 @@ const DrawControl = forwardRef<DrawControlHandle, DrawControlProps>(
       const handleEdited = (evt: L.DrawEvents.Edited) => {
         evt.layers.eachLayer((layer: Layer) => {
           if ("toGeoJSON" in layer) {
-            const feature = (layer as L.Layer & {
-              toGeoJSON: () => GeoJSON.Feature;
-            }).toGeoJSON();
+            const feature = (
+              layer as L.Layer & {
+                toGeoJSON: () => GeoJSON.Feature;
+              }
+            ).toGeoJSON();
             const props = feature.properties ?? {};
-            const idFromProps = (props as { id?: number; aoiId?: number })
-              ?.id ?? (props as { id?: number; aoiId?: number })?.aoiId;
+            const idFromProps =
+              (props as { id?: number; aoiId?: number })?.id ??
+              (props as { id?: number; aoiId?: number })?.aoiId;
 
             const geometry = feature.geometry as
               | GeoJSON.Polygon
@@ -164,8 +162,7 @@ const DrawControl = forwardRef<DrawControlHandle, DrawControlProps>(
 
             if (geometry && isValidGeoJsonGeometry(geometry)) {
               const matched = aois.find(
-                (a) =>
-                  JSON.stringify(a.geometry) === JSON.stringify(geometry)
+                (a) => JSON.stringify(a.geometry) === JSON.stringify(geometry)
               );
               if (matched?.id) onEdit(matched.id, geometry);
             }
@@ -176,12 +173,15 @@ const DrawControl = forwardRef<DrawControlHandle, DrawControlProps>(
       const handleDeleted = (evt: L.DrawEvents.Deleted) => {
         evt.layers.eachLayer((layer: Layer) => {
           if ("toGeoJSON" in layer) {
-            const feature = (layer as L.Layer & {
-              toGeoJSON: () => GeoJSON.Feature;
-            }).toGeoJSON();
+            const feature = (
+              layer as L.Layer & {
+                toGeoJSON: () => GeoJSON.Feature;
+              }
+            ).toGeoJSON();
             const props = feature.properties ?? {};
-            const idFromProps = (props as { id?: number; aoiId?: number })
-              ?.id ?? (props as { id?: number; aoiId?: number })?.aoiId;
+            const idFromProps =
+              (props as { id?: number; aoiId?: number })?.id ??
+              (props as { id?: number; aoiId?: number })?.aoiId;
 
             if (idFromProps != null) {
               onDelete(Number(idFromProps));
@@ -194,8 +194,7 @@ const DrawControl = forwardRef<DrawControlHandle, DrawControlProps>(
               | undefined;
             if (geometry && isValidGeoJsonGeometry(geometry)) {
               const matched = aois.find(
-                (a) =>
-                  JSON.stringify(a.geometry) === JSON.stringify(geometry)
+                (a) => JSON.stringify(a.geometry) === JSON.stringify(geometry)
               );
               if (matched?.id) onDelete(matched.id);
             }
@@ -203,14 +202,29 @@ const DrawControl = forwardRef<DrawControlHandle, DrawControlProps>(
         });
       };
 
-      map.on(L.Draw.Event.CREATED, handleCreated);
-      map.on(L.Draw.Event.EDITED, handleEdited);
-      map.on(L.Draw.Event.DELETED, handleDeleted);
+      map.on(
+        L.Draw.Event.CREATED,
+        handleCreated as (e: L.LeafletEvent) => void
+      );
+      map.on(L.Draw.Event.EDITED, handleEdited as (e: L.LeafletEvent) => void);
+      map.on(
+        L.Draw.Event.DELETED,
+        handleDeleted as (e: L.LeafletEvent) => void
+      );
 
       return () => {
-        map.off(L.Draw.Event.CREATED, handleCreated);
-        map.off(L.Draw.Event.EDITED, handleEdited);
-        map.off(L.Draw.Event.DELETED, handleDeleted);
+        map.on(
+          L.Draw.Event.CREATED,
+          handleCreated as (e: L.LeafletEvent) => void
+        );
+        map.on(
+          L.Draw.Event.EDITED,
+          handleEdited as (e: L.LeafletEvent) => void
+        );
+        map.on(
+          L.Draw.Event.DELETED,
+          handleDeleted as (e: L.LeafletEvent) => void
+        );
       };
     }, [map, aois, onCreate, onEdit, onDelete]);
 
