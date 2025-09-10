@@ -21,5 +21,9 @@ export const MapLogic = (props: MapComponentProps) => {
     previewAoiId: props.previewAoiId,
   });
 
-  return <SearchControl />;
+  return (
+    <>
+      <SearchControl />
+    </>
+  );
 };
