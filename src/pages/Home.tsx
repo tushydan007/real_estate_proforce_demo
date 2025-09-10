@@ -19,15 +19,9 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-black">
-      {/* Hero Section */}
       <Hero />
-      {/* Features Section */}
       <Features />
-
-      {/* How It Works */}
       <HowItWorks />
-
-      {/* CTA Section */}
       <Monitoring />
     </div>
   );

@@ -57,12 +57,12 @@ export default function AboutUs() {
   return (
     <div className="relative overflow-hidden">
       {/* Hero Section */}
-      <section className="relative w-full py-20 px-4 md:px-8 lg:px-16 bg-gradient-to-b from-primary/20 to-background text-center">
+      <section className="relative w-full py-20 px-4 md:px-8 lg:px-16 bg-black text-center">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-4xl md:text-5xl font-bold tracking-tight mb-6"
+          className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-white"
         >
           About Us
         </motion.h1>
@@ -70,7 +70,7 @@ export default function AboutUs() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="text-lg text-muted-foreground max-w-2xl mx-auto"
+          className="text-lg text-gray-200 max-w-2xl mx-auto"
         >
           We are on a mission to revolutionize asset monitoring using satellite
           technology, delivering insights that matter from space to your
@@ -93,10 +93,10 @@ export default function AboutUs() {
       </section>
 
       {/* Our Values */}
-      <section className="w-full py-16 px-4 md:px-8 lg:px-16 bg-muted/30">
+      <section className="w-full pt-16 pb-20 px-4 md:px-8 lg:px-16 bg-black">
         <div className="max-w-6xl mx-auto text-center mb-12">
-          <h2 className="text-3xl font-bold mb-6">Our Values</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold mb-6 text-gray-200">Our Values</h2>
+          <p className="text-gray-200 max-w-2xl mx-auto">
             The principles that guide us in building impactful and reliable
             solutions.
           </p>
@@ -109,13 +109,14 @@ export default function AboutUs() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2, duration: 0.6 }}
               viewport={{ once: true }}
+              className="rounded-xl"
             >
-              <Card className="h-full shadow-sm hover:shadow-md transition-shadow rounded-xl">
+              <Card className="h-full shadow-sm hover:shadow-md transition-shadow rounded-xl bg-[#0C111C] border border-gray-600 py-12">
                 <CardHeader>
-                  <CardTitle className="text-xl">{value.title}</CardTitle>
+                  <CardTitle className="text-xl text-gray-200 text-center">{value.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{value.description}</p>
+                  <p className="text-gray-200 text-center">{value.description}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -124,10 +125,10 @@ export default function AboutUs() {
       </section>
 
       {/* Meet the Team */}
-      <section className="w-full py-16 px-4 md:px-8 lg:px-16  border-b border-gray-700">
+      <section className="w-full py-16 px-4 md:px-8 lg:px-16  border-b border-gray-700 bg-black">
         <div className="max-w-6xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold mb-6 text-black">Meet the Team</h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
+          <p className="text-gray-200 max-w-2xl mx-auto">
             A passionate team of experts dedicated to transforming how the world
             monitors and manages assets from space.
           </p>
