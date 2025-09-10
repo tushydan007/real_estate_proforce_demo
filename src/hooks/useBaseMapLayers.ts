@@ -3,20 +3,23 @@ import L from "leaflet";
 import type { Map } from "leaflet";
 
 export const useBaseMapLayers = (map: Map) => {
- const activeLayerRef = useRef<L.TileLayer | null>(null);
-
+  const activeLayerRef = useRef<L.TileLayer | null>(null);
 
   useEffect(() => {
     if (!map) return;
 
-    const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors",
-    });
+    const osm = L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        attribution: "&copy; OpenStreetMap contributors",
+      }
+    );
 
     const satellite = L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
-        attribution: "Tiles © Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye",
+        attribution:
+          "Tiles © Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye",
       }
     );
 
@@ -28,7 +31,9 @@ export const useBaseMapLayers = (map: Map) => {
     activeLayerRef.current = baseMaps.OpenStreetMap;
     activeLayerRef.current.addTo(map);
 
-    const control = L.control.layers(baseMaps, undefined, { position: "topright" }).addTo(map);
+    const control = L.control
+      .layers(baseMaps, undefined, { position: "topright" })
+      .addTo(map);
 
     map.on("baselayerchange", (e: L.LayersControlEvent) => {
       const newLayer = baseMaps[e.name];
@@ -45,4 +50,3 @@ export const useBaseMapLayers = (map: Map) => {
     };
   }, [map]);
 };
-

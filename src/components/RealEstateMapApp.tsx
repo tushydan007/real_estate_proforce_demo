@@ -8,11 +8,11 @@ import { sampleGeoJSON } from "../sampleData";
 import { MapSearchControl } from "../components/MapSearchControl";
 import { LayerControl } from "../components/LayerControl";
 import { MapController } from "../components/MapController";
-import { PropertyPopup } from "../components/PropertyPopup";
+import { PropertyPopup } from "../components/properties/PropertyPopup";
 import type { PropertyFeature, PropertyFeatureCollection } from "../../types";
 import "leaflet/dist/leaflet.css";
-import PropertiesCard from "./PropertiesCard";
-import PropertyLegend from "./PropertyLegend";
+import PropertiesCard from "./properties/PropertiesCard";
+import PropertyLegend from "./properties/PropertyLegend";
 
 /* ---------------- Fix leaflet default marker icons ---------------- */
 delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
