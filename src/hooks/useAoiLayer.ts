@@ -1,4 +1,3 @@
-// THIS IS A VALID CODE FOR FALLBACK
 import L from "leaflet";
 import "leaflet-draw";
 import "leaflet-draw/dist/leaflet.draw.css";
