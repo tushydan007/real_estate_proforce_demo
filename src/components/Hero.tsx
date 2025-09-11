@@ -131,12 +131,12 @@ const Hero = () => {
         animate={{ scale: 1 }}
         transition={{ duration: 0.5 }}
         className="w-full md:w-1/2 h-64 sm:h-72 md:h-80 lg:h-[620px] flex items-center justify-center relative z-10"
-        style={{ backgroundColor: "#000000" }}
+        style={{ backgroundColor: "transparent" }}
       >
         <div
           ref={containerRef}
           className="w-full h-full flex items-center justify-center overflow-hidden"
-          style={{ backgroundColor: "#000000" }}
+          style={{ backgroundColor: "transparent" }}
         >
           {texturesLoaded ? (
             <Globe
