@@ -9,6 +9,7 @@ import {
   EyeOff,
   Activity,
   Square,
+  Copy,
   Download,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -36,6 +37,20 @@ const AoiCartPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
+
+  const handleCopyCoordinates = async (coords: string | null | undefined) => {
+    if (!coords) return;
+    try {
+      await navigator.clipboard.writeText(coords);
+      toast.success("Coordinates copied to clipboard", {
+        style: { background: "#1f2937", color: "#fff" },
+        icon: "📋",
+      });
+    } catch (err) {
+      console.error("Failed to copy coordinates:", err);
+      toast.error("Failed to copy coordinates");
+    }
+  };
 
   // Fetch AOI cart from backend
   useEffect(() => {
@@ -327,7 +342,7 @@ const AoiCartPage = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleViewOnMap(item.id)}
-                            className="text-blue-400 hover:text-blue-300"
+                            className="text-blue-400 hover:text-blue-300 cursor-pointer"
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
@@ -335,7 +350,7 @@ const AoiCartPage = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleRemoveAoi(item.id)}
-                            className="text-red-500 hover:text-red-400"
+                            className="text-red-500 hover:text-red-400 cursor-pointer"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -404,7 +419,7 @@ const AoiCartPage = () => {
                           )}
                         </button>
                         <div
-                          className={`text-xs font-mono bg-zinc-800 rounded p-3 text-gray-200 overflow-x-auto ${
+                          className={`relative text-xs font-mono bg-zinc-800 rounded p-3 text-gray-200 overflow-x-auto ${
                             expandedItems.has(item.id) ? "max-h-32" : "max-h-16"
                           } transition-all duration-200`}
                         >
@@ -416,6 +431,20 @@ const AoiCartPage = () => {
                             {item.coordinates ||
                               formatCoordinates(item.geometry)}
                           </div>
+
+                          {/* Copy icon button on the right */}
+                          <button
+                            onClick={() =>
+                              handleCopyCoordinates(
+                                item.coordinates ||
+                                  formatCoordinates(item.geometry)
+                              )
+                            }
+                            className="absolute top-2 right-2 text-gray-400 hover:text-white cursor-pointer"
+                            title="Copy coordinates"
+                          >
+                            <Copy className="w-4 h-4" />
+                          </button>
                         </div>
                       </div>
 
