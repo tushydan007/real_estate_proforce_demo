@@ -64,7 +64,7 @@ const Navbar = () => {
         {/* Actions */}
         <div className="hidden md:flex gap-4 items-center">
           {/* Cart */}
-          <Link to="/cart" className="relative">
+          <Link to="/cart" className="relative mr-4">
             <ShoppingCart className="w-6 h-6 text-gray-300 hover:text-blue-500" />
             {cartCount > 0 && (
               <motion.span

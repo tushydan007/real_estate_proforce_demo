@@ -224,7 +224,7 @@ const AoiCartPage = () => {
       toast.error("No AOIs in cart to analyze");
       return;
     }
-    navigate("/analysis", {
+    navigate("/checkout", {
       state: {
         aoiItems: cartItems,
         totalArea: totalArea,
@@ -544,7 +544,7 @@ const AoiCartPage = () => {
                 className="w-full bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
                 disabled={cartItems.length === 0}
               >
-                Proceed to Analysis
+                Proceed to Checkout
               </Button>
 
               <Button

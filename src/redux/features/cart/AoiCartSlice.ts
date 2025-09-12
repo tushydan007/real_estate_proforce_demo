@@ -115,6 +115,7 @@ const aoiCartSlice = createSlice({
       state.totalArea = 0;
       state.totalCount = 0;
     },
+    
 
     // Bulk operations
     addMultipleAoisToCart(state, action: PayloadAction<AoiCartItem[]>) {

@@ -4,7 +4,7 @@ import type { RootState, AppDispatch } from "@/redux/store";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { clearCart } from "@/redux/features/cart/CartSlice";
+import { clearAoiCart } from "@/redux/features/cart/AoiCartSlice";
 import { resetPayment } from "../../redux/features/payment/PaymentSlice";
 
 const PaymentSuccessPage = () => {
@@ -14,7 +14,7 @@ const PaymentSuccessPage = () => {
 
   // ✅ Clear cart + reset payment state on mount
   useEffect(() => {
-    dispatch(clearCart());
+    dispatch(clearAoiCart());
     dispatch(resetPayment());
   }, [dispatch]);
 
@@ -57,7 +57,6 @@ const PaymentSuccessPage = () => {
 };
 
 export default PaymentSuccessPage;
-
 
 // import { useEffect, useState } from "react";
 // import axios from "axios";
