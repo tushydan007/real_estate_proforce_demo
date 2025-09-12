@@ -29,7 +29,12 @@ export const AoiToolbar = ({
 }: AoiToolbarProps) => {
   const { startPolygon, startRectangle } = useAoiLayer({
     map,
-    aois,
+    aois: aois.map((aoi) => ({
+      ...aoi,
+      is_active: aoi.is_active ?? false,
+      monitoring_enabled: aoi.monitoring_enabled ?? false,
+      created_at: aoi.created_at ? new Date(aoi.created_at) : undefined,
+    })),
     onCreate,
     onEdit,
     onDelete,
