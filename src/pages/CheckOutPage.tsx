@@ -276,7 +276,7 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
           </Card>
 
           {/* Payment Options - Right */}
-          <Card className="bg-gray-800/50 backdrop-blur-md border border-gray-700 shadow-xl rounded-xl overflow-hidden lg:h-[50%] lg:col-span-2">
+          <Card className="bg-gray-800/50 backdrop-blur-md border border-gray-700 shadow-xl rounded-xl overflow-hidden lg:h-[540px] lg:col-span-2">
             <CardHeader className="bg-gray-900/50 p-6">
               <CardTitle className="text-xl font-semibold text-gray-100">
                 Payment Details
