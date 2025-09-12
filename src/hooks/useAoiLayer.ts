@@ -1,7 +1,6 @@
 // INTEGRATED AOI LAYER WITH CART SYSTEM
 import L from "leaflet";
 import "leaflet-draw";
-import "leaflet-draw/dist/leaflet.draw.css";
 import type { Map } from "leaflet";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import {
   type AoiCartItem,
 } from "../redux/features/cart/AoiCartSlice";
 import toast from "react-hot-toast";
+import "leaflet-draw/dist/leaflet.draw.css";
 
 // Base AOI interface (from your existing types)
 export interface Aoi {
@@ -582,7 +582,7 @@ export const useAoiLayer = ({
                 ${isInCart ? "IN CART" : "NOT IN CART"}
               </span>
             </div>
-            
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
               <div>
                 <strong style="font-size: 12px; color: #6b7280;">Status:</strong>
@@ -601,24 +601,24 @@ export const useAoiLayer = ({
                 </div>
               </div>
             </div>
-            
+
             <div style="margin-bottom: 12px;">
               <strong style="font-size: 12px; color: #6b7280;">Area:</strong>
               <div style="font-size: 14px; font-weight: 600; color: #1f2937;">
                 ${formatArea(area)}
               </div>
             </div>
-            
+
             <details style="margin-bottom: 12px;">
               <summary style="font-size: 12px; color: #6b7280; cursor: pointer;">
                 <strong>Coordinates</strong>
               </summary>
               <div style="
-                font-family: monospace; 
-                font-size: 10px; 
-                background: #f3f4f6; 
-                padding: 8px; 
-                border-radius: 4px; 
+                font-family: monospace;
+                font-size: 10px;
+                background: #f3f4f6;
+                padding: 8px;
+                border-radius: 4px;
                 margin-top: 4px;
                 max-height: 60px;
                 overflow-y: auto;
@@ -627,7 +627,7 @@ export const useAoiLayer = ({
                 ${coordinates}
               </div>
             </details>
-            
+
             <button onclick="window.toggleAoiCart_${aoi.id}()" style="
               background: ${isInCart ? "#ef4444" : "#10b981"};
               color: white;
