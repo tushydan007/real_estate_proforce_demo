@@ -3,10 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, NavLink } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [open]);
 
   return (
     <div className="md:hidden">
@@ -60,28 +68,28 @@ export function MobileNav() {
                 {/* Nav Links */}
                 <nav className="flex flex-col gap-4 text-lg mt-6">
                   <NavLink
-                    to="#features"
+                    to="/map-page"
                     onClick={() => setOpen(false)}
                     className="hover:text-blue-600"
                   >
-                    Features
+                    Draw AOI
                   </NavLink>
                   <NavLink
-                    to="#how-it-works"
-                    onClick={() => setOpen(false)}
-                    className="hover:text-blue-600"
-                  >
-                    How it Works
-                  </NavLink>
-                  <NavLink
-                    to="#plans"
+                    to="/subscriptions"
                     onClick={() => setOpen(false)}
                     className="hover:text-blue-600"
                   >
                     Plans
                   </NavLink>
                   <NavLink
-                    to="#contact"
+                    to="about-us"
+                    onClick={() => setOpen(false)}
+                    className="hover:text-blue-600"
+                  >
+                    About Us
+                  </NavLink>
+                  <NavLink
+                    to="/contact-us"
                     onClick={() => setOpen(false)}
                     className="hover:text-blue-600"
                   >

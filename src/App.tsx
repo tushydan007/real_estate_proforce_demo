@@ -13,6 +13,10 @@ import MapPage from "./pages/MapPage";
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./components/AboutUs";
 import UserAoi from "./pages/UserAoi";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckOutPage";
+import PaymentSuccessPage from "./pages/payments/PaymentSuccessPage";
+import PaymentFailedPage from "./pages/payments/PaymentFailedPage";
 
 const App = () => {
   return (
@@ -27,12 +31,31 @@ const App = () => {
           <Route path="/password-reset" element={<ForgotPassword />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/map-page" element={<MapPage />} />
+          <Route path="/subscription" element={<Subscription />} />
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payment-success"
+            element={
+              // <ProtectedRoute>
+              <PaymentSuccessPage />
+              // </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payment-failed"
+            element={
+              // <ProtectedRoute>
+              <PaymentFailedPage />
+              // </ProtectedRoute>
             }
           />
           <Route
@@ -44,14 +67,13 @@ const App = () => {
             }
           />
           <Route
-            path="/map-page"
+            path="/checkout"
             element={
               // <ProtectedRoute>
-              <MapPage />
+              <CheckoutPage orderId="123456" />
               // </ProtectedRoute>
             }
           />
-          <Route path="/subscription" element={<Subscription />} />
         </Routes>
       </main>
       <Footer />
