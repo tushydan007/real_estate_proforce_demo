@@ -10,6 +10,9 @@ const Navbar = () => {
   const cartCount = useSelector((state: RootState) =>
     state.cart.items.reduce((acc, item) => acc + item.quantity, 0)
   );
+  const totalCount = useSelector(
+    (state: RootState) => state.aoiCart.totalCount
+  );
 
   return (
     <header className="sticky top-0 z-50 bg-[#101828] backdrop-blur-md shadow-md h-16">
@@ -70,7 +73,7 @@ const Navbar = () => {
                 exit={{ scale: 0 }}
                 className="absolute -top-2 -right-2 bg-gradient-to-r from-[#3B82F6] to-[#3f33ea] text-gray-200 text-xs font-bold px-2 py-0.5 rounded-full"
               >
-                {cartCount}
+                {totalCount}
               </motion.span>
             )}
           </Link>
