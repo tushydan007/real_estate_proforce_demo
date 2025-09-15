@@ -3,7 +3,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../redux/store";
 import { clearAoiCart, formatArea } from "../redux/features/cart/AoiCartSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { usePaymentWebSocket } from "@/hooks/usePaymentWebSocket";
 
 interface CheckoutPageProps {
-  orderId?: string; // Optional, as it might be created dynamically
+  orderId?: string;
 }
 
 const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
@@ -27,13 +27,15 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
   const payment = useSelector((state: RootState) => state.payment);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [isProcessing, setIsProcessing] = useState(false);
+  const location = useLocation();
+  const [isProcessingStripe, setIsProcessingStripe] = useState(false);
+  const [isProcessingPaystack, setIsProcessingPaystack] = useState(false);
   const [localOrderId, setLocalOrderId] = useState(initialOrderId);
 
-  // 🔌 WebSocket live updates (use localOrderId if set)
+  const { durationType = "months", durationValue = 1 } = location.state || {};
+
   usePaymentWebSocket(localOrderId || "");
 
-  // 🚀 Auto-navigate based on payment status
   useEffect(() => {
     if (payment.status === "success") {
       dispatch(clearAoiCart());
@@ -43,11 +45,23 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
     }
   }, [payment.status, navigate, dispatch]);
 
-  // Mock pricing logic (adjust as per business rules)
+  const BASE_RATE_PER_KM2_PER_DAY = 0.01;
+
   const calculatePricing = () => {
-    const baseRate = 0.01; // $0.01 per m²
-    const subtotal = totalArea * baseRate;
-    const discountRate = 0.05; // 5%
+    let days = 0;
+    switch (durationType) {
+      case "days":
+        days = durationValue;
+        break;
+      case "months":
+        days = durationValue * 30;
+        break;
+      case "years":
+        days = durationValue * 365;
+        break;
+    }
+    const subtotal = totalArea * BASE_RATE_PER_KM2_PER_DAY * days;
+    const discountRate = 0.05;
     const discount = subtotal * discountRate;
     const total = subtotal - discount;
     return { subtotal, discount, total };
@@ -63,9 +77,14 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
       return;
     }
 
-    setIsProcessing(true);
+    // Set the appropriate loading state
+    if (method === "stripe") {
+      setIsProcessingStripe(true);
+    } else {
+      setIsProcessingPaystack(true);
+    }
+
     try {
-      // Step 1: Create order if not already created
       let currentOrderId = localOrderId;
       if (!currentOrderId) {
         const orderRes = await axios.post(
@@ -76,10 +95,12 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
               name: item.name,
               area: item.area,
               type: item.type,
-              monitoring_enabled: item.monitoring_enabled,
-              is_active: item.is_active,
+              monitoring_enabled: true,
+              is_active: true,
             })),
-            email: "customer@example.com", // TODO: Replace with authenticated user email
+            email: "customer@example.com",
+            duration: { type: durationType, value: durationValue },
+            total_cost: total,
           },
           {
             headers: {
@@ -91,12 +112,11 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
         setLocalOrderId(currentOrderId);
       }
 
-      // Step 2: Initiate payment session
       let res;
       if (method === "stripe") {
         res = await axios.post(
           "http://127.0.0.1:8000/checkout/stripe/",
-          { items: cartItems, orderId: currentOrderId },
+          { items: cartItems, orderId: currentOrderId, totalCost: total },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
@@ -111,6 +131,7 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
             items: cartItems,
             email: "customer@example.com",
             orderId: currentOrderId,
+            totalCost: total,
           },
           {
             headers: {
@@ -121,22 +142,25 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
         window.location.href = res.data.data.authorization_url;
       }
     } catch (err) {
-      console.error("Payment initiation failed:", err);
+      console.error(`Payment initiation failed for ${method}:`, err);
       toast.error(`Failed to initiate ${method} payment. Please try again.`, {
         style: { background: "#1f2937", color: "#fff" },
       });
     } finally {
-      setIsProcessing(false);
+      // Reset the appropriate loading state
+      if (method === "stripe") {
+        setIsProcessingStripe(false);
+      } else {
+        setIsProcessingPaystack(false);
+      }
     }
   };
 
-  // Get AOI type icon
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "Rectangle":
         return <Square className="w-4 h-4 text-indigo-400" />;
       case "Polygon":
-        return <MapPin className="w-4 h-4 text-indigo-400" />;
       case "MultiPolygon":
         return <MapPin className="w-4 h-4 text-indigo-400" />;
       default:
@@ -185,7 +209,6 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
           Secure Checkout
         </h1>
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Order Summary - Left */}
           <Card className="bg-gray-800/50 backdrop-blur-md border border-gray-700 shadow-xl rounded-xl overflow-hidden lg:col-span-3">
             <CardHeader className="bg-gray-900/50 p-6">
               <CardTitle className="text-xl font-semibold text-gray-100">
@@ -205,27 +228,13 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
                       Area: {formatArea(item.area)} • Type: {item.type}
                     </p>
                     <div className="flex gap-2 mt-2">
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full ${
-                          item.is_active
-                            ? "bg-green-900/50 text-green-300"
-                            : "bg-gray-700 text-gray-400"
-                        }`}
-                      >
+                      <span className="text-xs px-2 py-1 rounded-full bg-green-900/50 text-green-300">
                         <Activity className="w-3 h-3 inline mr-1" />
-                        {item.is_active ? "Active" : "Inactive"}
+                        Active
                       </span>
-                      <span
-                        className={`text-xs px-2 py-1 rounded-full ${
-                          item.monitoring_enabled
-                            ? "bg-blue-900/50 text-blue-300"
-                            : "bg-gray-700 text-gray-400"
-                        }`}
-                      >
+                      <span className="text-xs px-2 py-1 rounded-full bg-blue-900/50 text-blue-300">
                         <Eye className="w-3 h-3 inline mr-1" />
-                        {item.monitoring_enabled
-                          ? "Monitoring"
-                          : "Not Monitoring"}
+                        Monitoring
                       </span>
                     </div>
                     {item.description && (
@@ -252,30 +261,35 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between text-gray-400">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>${Number(subtotal.toFixed(2)).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-gray-400">
                   <span>Discount (5%)</span>
                   <span className="text-green-400">
-                    -${discount.toFixed(2)}
+                    -${Number(discount.toFixed(2)).toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between text-gray-400">
+                  <span>Monitoring Duration</span>
+                  <span className="text-blue-400">
+                    {durationValue} {durationType}
                   </span>
                 </div>
                 <Separator className="bg-gray-700 my-2" />
                 <div className="flex justify-between font-bold text-gray-100">
                   <span>Total</span>
-                  <span className="text-indigo-400">${total.toFixed(2)}</span>
+                  <span className="text-indigo-400">
+                    ${Number(total.toFixed(2)).toLocaleString()}
+                  </span>
                 </div>
               </div>
               <div className="text-xs text-gray-500 mt-4">
-                Total Area: {formatArea(totalArea)} • Active AOIs:{" "}
-                {cartItems.filter((item) => item.is_active).length} • Monitored
-                AOIs:{" "}
-                {cartItems.filter((item) => item.monitoring_enabled).length}
+                Total Area: {formatArea(totalArea)} • Active AOIs: {totalCount}{" "}
+                • Monitored AOIs: {totalCount}
               </div>
             </CardContent>
           </Card>
 
-          {/* Payment Options - Right */}
           <Card className="bg-gray-800/50 backdrop-blur-md border border-gray-700 shadow-xl rounded-xl overflow-hidden lg:h-[540px] lg:col-span-2">
             <CardHeader className="bg-gray-900/50 p-6">
               <CardTitle className="text-xl font-semibold text-gray-100">
@@ -290,19 +304,19 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
               <Button
                 onClick={() => handlePayment("stripe")}
                 className="cursor-pointer w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-6 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={isProcessing || payment.status === "loading"}
+                disabled={isProcessingStripe || payment.status === "loading"}
               >
-                {isProcessing ? "Processing..." : "Pay with Stripe"}
+                {isProcessingStripe ? "Processing..." : "Pay with Stripe"}
               </Button>
               <Button
                 onClick={() => handlePayment("paystack")}
                 className="cursor-pointer w-full bg-green-600 hover:bg-green-500 text-white font-medium py-6 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={isProcessing || payment.status === "loading"}
+                disabled={isProcessingPaystack || payment.status === "loading"}
               >
-                {isProcessing ? "Processing..." : "Pay with Paystack"}
+                {isProcessingPaystack ? "Processing..." : "Pay with Paystack"}
               </Button>
               <Button
-                onClick={() => navigate("/aoi-cart")}
+                onClick={() => navigate("/cart")}
                 variant="outline"
                 className="w-full border-gray-600 text-gray-600 cursor-pointer hover:bg-gray-700 hover:text-white transition-colors duration-300"
               >
@@ -321,6 +335,9 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
                 All transactions are secure and encrypted. By proceeding, you
                 agree to our terms.
               </div>
+              <div className="text-xs text-gray-500 mt-2 text-center">
+                Based on ${BASE_RATE_PER_KM2_PER_DAY.toFixed(2)} per km² per day
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -330,171 +347,3 @@ const CheckoutPage = ({ orderId: initialOrderId }: CheckoutPageProps) => {
 };
 
 export default CheckoutPage;
-
-// "use client";
-
-// import { useSelector, useDispatch } from "react-redux";
-// import type { RootState, AppDispatch } from "../redux/store";
-// import { clearCart } from "../redux/features/cart/CartSlice";
-// import { useNavigate } from "react-router-dom";
-// import { Button } from "@/components/ui/button";
-// import { Card } from "@/components/ui/card";
-// import toast, { Toaster } from "react-hot-toast";
-// import { motion } from "framer-motion";
-// import axios from "axios";
-// import { useEffect } from "react";
-// import { usePaymentWebSocket } from "@/hooks/usePaymentWebSocket";
-
-// interface CheckoutPageProps {
-//   orderId: string; // comes from backend after checkout creation
-// }
-
-// const CheckoutPage = ({ orderId }: CheckoutPageProps) => {
-//   const cartItems = useSelector((state: RootState) => state.cart.items);
-//   const payment = useSelector((state: RootState) => state.payment);
-//   const dispatch = useDispatch<AppDispatch>();
-//   const navigate = useNavigate();
-
-//   // 🔌 WebSocket live updates
-//   usePaymentWebSocket(orderId);
-
-//   // 🚀 Auto-navigate based on payment status
-//   useEffect(() => {
-//     if (payment.status === "success") {
-//       navigate("/payment-success");
-//     } else if (payment.status === "failed") {
-//       navigate("/payment-failed");
-//     }
-//   }, [payment.status, navigate]);
-
-//   const subtotal = cartItems.reduce(
-//     (acc, item) => acc + item.price * item.quantity,
-//     0
-//   );
-//   const discount = subtotal * 0.05;
-//   const total = subtotal - discount;
-
-//   const handlePayment = async (method: "stripe" | "paystack") => {
-//     if (cartItems.length === 0) {
-//       toast.error("Your cart is empty!");
-//       return;
-//     }
-
-//     try {
-//       // 🔹 Step 1: Create order in backend to get orderId
-//       const orderRes = await axios.post(
-//         "http://127.0.0.1:8000/orders/create/",
-//         {
-//           items: cartItems,
-//           email: "customer@example.com", // replace with logged in user
-//         }
-//       );
-
-//       const orderId = orderRes.data.order_id; // backend must return this
-
-//       // 🔹 Step 2: Start checkout session with Stripe or Paystack
-//       let res;
-//       if (method === "stripe") {
-//         res = await axios.post("http://127.0.0.1:8000/checkout/stripe/", {
-//           items: cartItems,
-//           orderId, // attach orderId so webhook knows which group to notify
-//         });
-//         window.location.href = res.data.url;
-//       } else {
-//         res = await axios.post("http://127.0.0.1:8000/checkout/paystack/", {
-//           items: cartItems,
-//           email: "customer@example.com",
-//           orderId, // attach orderId in metadata
-//         });
-//         window.location.href = res.data.data.authorization_url;
-//       }
-
-//       // 🔹 Step 3: Clear cart (optional, since order is created)
-//       dispatch(clearCart());
-//     } catch (err) {
-//       console.error(err);
-//       toast.error(
-//         `${method === "stripe" ? "Stripe" : "Paystack"} checkout failed!`
-//       );
-//     }
-//   };
-
-//   return (
-//     <div className="w-full min-h-screen bg-black text-white px-4 md:px-8 py-10">
-//       <Toaster position="top-right" />
-//       <motion.h1
-//         className="text-3xl md:text-4xl font-bold mb-10 text-center"
-//         initial={{ opacity: 0, y: -20 }}
-//         animate={{ opacity: 1, y: 0 }}
-//       >
-//         💳 Checkout
-//       </motion.h1>
-
-//       <div className="max-w-2xl mx-auto">
-//         <Card className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-//           <h2 className="text-xl font-semibold mb-6 text-gray-200">
-//             Order Summary
-//           </h2>
-
-//           <div className="space-y-3 text-gray-400">
-//             {cartItems.map((item) => (
-//               <div key={item.id} className="flex justify-between">
-//                 <span>
-//                   {item.name} × {item.quantity}
-//                 </span>
-//                 <span>${(item.price * item.quantity).toFixed(2)}</span>
-//               </div>
-//             ))}
-//           </div>
-
-//           <div className="flex justify-between mt-6 text-gray-400">
-//             <span>Subtotal</span>
-//             <span>${subtotal.toFixed(2)}</span>
-//           </div>
-//           <div className="flex justify-between text-gray-400">
-//             <span>Discount (5%)</span>
-//             <span>-${discount.toFixed(2)}</span>
-//           </div>
-//           <div className="flex justify-between font-bold text-lg mt-6 border-t border-gray-700 pt-4 text-gray-200">
-//             <span>Total</span>
-//             <span>${total.toFixed(2)}</span>
-//           </div>
-
-//           <Button
-//             onClick={() => handlePayment("stripe")}
-//             className="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
-//           >
-//             Pay with Stripe
-//           </Button>
-
-//           <Button
-//             onClick={() => handlePayment("paystack")}
-//             className="w-full mt-4 bg-green-600 hover:bg-green-700 cursor-pointer"
-//           >
-//             Pay with Paystack
-//           </Button>
-
-//           <Button
-//             onClick={() => navigate("/cart")}
-//             className="w-full mt-4 bg-gray-700 hover:bg-gray-600 cursor-pointer"
-//           >
-//             Back to Cart
-//           </Button>
-
-//           {/* ✅ Live payment state */}
-//           {payment.status === "loading" && (
-//             <motion.p
-//               className="mt-6 text-yellow-400 text-center animate-pulse"
-//               initial={{ opacity: 0 }}
-//               animate={{ opacity: 1 }}
-//             >
-//               🔄 Processing payment...
-//             </motion.p>
-//           )}
-//         </Card>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CheckoutPage;

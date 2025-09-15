@@ -17,6 +17,7 @@ import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckOutPage";
 import PaymentSuccessPage from "./pages/payments/PaymentSuccessPage";
 import PaymentFailedPage from "./pages/payments/PaymentFailedPage";
+import MapHighlightPage from "./pages/MapHighlightPage";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/map-page" element={<MapPage />} />
+          <Route path="/map" element={<MapHighlightPage />} />
           <Route path="/subscription" element={<Subscription />} />
           <Route
             path="/dashboard"
