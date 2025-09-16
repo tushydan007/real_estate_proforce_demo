@@ -20,7 +20,7 @@ const Navbar = () => {
         {/* Brand */}
         <Link
           to="/"
-          className="font-normal text-2xl bg-gradient-to-r from-[#3B82F6] to-[#3f33ea] text-transparent bg-clip-text font-['kavoon']"
+          className="font-normal text-2xl bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text font-['kavoon']"
         >
           ASSET WATCH
         </Link>
@@ -35,14 +35,24 @@ const Navbar = () => {
           >
             Draw AOI
           </NavLink>
-          <NavLink
+          {/* <NavLink
             to="/subscription"
             className={({ isActive }) =>
               isActive ? "text-blue-500 font-semibold" : "hover:text-blue-600"
             }
           >
             Plans
+          </NavLink> */}
+
+          <NavLink
+            to="/careers"
+            className={({ isActive }) =>
+              isActive ? "text-blue-500 font-semibold" : "hover:text-blue-600"
+            }
+          >
+            Careers
           </NavLink>
+
           <NavLink
             to="/about-us"
             className={({ isActive }) =>
@@ -51,6 +61,7 @@ const Navbar = () => {
           >
             About Us
           </NavLink>
+
           <NavLink
             to="/contact-us"
             className={({ isActive }) =>
@@ -71,7 +82,7 @@ const Navbar = () => {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                className="absolute -top-2 -right-2 bg-gradient-to-r from-[#3B82F6] to-[#3f33ea] text-gray-200 text-xs font-bold px-2 py-0.5 rounded-full"
+                className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"
               >
                 {totalCount}
               </motion.span>

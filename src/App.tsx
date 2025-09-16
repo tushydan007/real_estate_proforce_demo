@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
-import Subscription from "./pages/Subscription";
+// import Subscription from "./pages/Subscription";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -18,6 +18,7 @@ import CheckoutPage from "./pages/CheckOutPage";
 import PaymentSuccessPage from "./pages/payments/PaymentSuccessPage";
 import PaymentFailedPage from "./pages/payments/PaymentFailedPage";
 import MapHighlightPage from "./pages/MapHighlightPage";
+import Careers from "./pages/CareersPage";
 
 const App = () => {
   return (
@@ -35,7 +36,8 @@ const App = () => {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/map-page" element={<MapPage />} />
           <Route path="/map" element={<MapHighlightPage />} />
-          <Route path="/subscription" element={<Subscription />} />
+          {/* <Route path="/subscription" element={<Subscription />} /> */}
+          <Route path="/careers" element={<Careers />} />
           <Route
             path="/dashboard"
             element={

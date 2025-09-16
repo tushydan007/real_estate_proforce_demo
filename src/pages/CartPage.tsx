@@ -537,7 +537,7 @@ const AoiCartPage = () => {
 
               <Button
                 onClick={handleProceedToAnalysis}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg cursor-pointer"
                 disabled={cartItems.length === 0 || durationValue < 1}
               >
                 Proceed to Checkout
