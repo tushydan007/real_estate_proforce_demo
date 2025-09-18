@@ -31,7 +31,7 @@ const team = [
   {
     id: 1,
     name: "Engr. Ade Ogundeyin",
-    role: "CEO & Founder",
+    role: "Group Managing Director & CEO",
     image: "/assets/team/gmd.jpg",
   },
   {
@@ -43,7 +43,7 @@ const team = [
   {
     id: 3,
     name: "Ayobami Ogundeyin",
-    role: "Head of Product",
+    role: "Head of Operations",
     image: "/assets/team/hoo.jpg",
   },
 ];
