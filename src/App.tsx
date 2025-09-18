@@ -41,25 +41,25 @@ const App = () => {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <Dashboard />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
           <Route
             path="/payment-success"
             element={
-              // <ProtectedRoute>
-              <PaymentSuccessPage />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <PaymentSuccessPage />
+              </ProtectedRoute>
             }
           />
           <Route
             path="/payment-failed"
             element={
-              // <ProtectedRoute>
-              <PaymentFailedPage />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <PaymentFailedPage />
+              </ProtectedRoute>
             }
           />
           <Route
@@ -73,9 +73,9 @@ const App = () => {
           <Route
             path="/checkout"
             element={
-              // <ProtectedRoute>
-              <CheckoutPage orderId="123456" />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <CheckoutPage orderId="123456" />
+              </ProtectedRoute>
             }
           />
         </Routes>

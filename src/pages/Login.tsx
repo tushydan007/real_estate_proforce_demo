@@ -30,7 +30,7 @@ export default function Login() {
 
   async function onSubmit(FormValues: LoginFormData) {
     try {
-      const { data } = await client.post("/api/auth/login/", FormValues);
+      const { data } = await client.post("/api/auth/jwt/create/", FormValues);
       const token = data?.key || data?.token || data?.access;
 
       if (token) saveAuthToken(token);
@@ -73,7 +73,7 @@ export default function Login() {
           {/* Username / Email */}
           <div>
             <label className="block text-sm font-medium text-gray-200">
-              Username or Email
+              Email
             </label>
             <input
               type="text"
@@ -161,7 +161,7 @@ export default function Login() {
           >
             {isSubmitting && (
               <svg
-                className="h-5 w-5 animate-spin text-white"
+                className="h-5 w-5 animate-spin text-black"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"

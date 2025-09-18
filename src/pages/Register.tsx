@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import client from "../lib/client";
-import { saveAuthToken, saveUser } from "../lib/auth";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -20,14 +19,15 @@ interface ApiError {
 // Define Zod schema for validation
 const registerSchema = z
   .object({
-    username: z.string().min(3, "Username must be at least 3 characters"),
+    firstName: z.string().min(3, "First name must be at least 3 characters"),
+    lastName: z.string().min(3, "Last name must be at least 3 characters"),
     email: z.string().email("Invalid email address"),
-    password1: z.string().min(6, "Password must be at least 6 characters"),
-    password2: z.string().min(6, "Password confirmation is required"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    re_password: z.string().min(6, "Password confirmation is required"),
   })
-  .refine((data) => data.password1 === data.password2, {
+  .refine((data) => data.password === data.re_password, {
     message: "Passwords do not match",
-    path: ["password2"],
+    path: ["re_password"],
   });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -47,14 +47,9 @@ export default function Register() {
   async function onSubmit(data: RegisterFormData) {
     setLoading(true);
     try {
-      const res = await client.post("/api/auth/registration/", data);
-      const result = res.data;
-
-      const token = result?.key || result?.token || result?.access;
-      if (token) saveAuthToken(token);
-      if (result?.user) saveUser(result.user);
-
-      toast.success("Account created successfully 🎉");
+      await client.post("/api/auth/users/", data);
+      // Show success message
+      toast.success("Account created! Please check your email to verify ✅");
       navigate("/verify-email");
     } catch (err: unknown) {
       const errorData = (err as ApiError).response?.data;
@@ -72,19 +67,36 @@ export default function Register() {
       <div className="w-full max-w-md p-6 rounded-2xl shadow-lg bg-[#0C111C] text-gray-200">
         <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Username */}
+          {/* First Name */}
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
-              Username
+              First Name
             </label>
             <input
-              {...register("username")}
-              placeholder="Username"
+              {...register("firstName")}
+              placeholder="Firstname"
               className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-300"
             />
-            {errors.username && (
+            {errors.firstName && (
               <p className="text-sm text-red-600 mt-1">
-                {errors.username.message}
+                {errors.firstName.message}
+              </p>
+            )}
+          </div>
+
+          {/* Last Name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-200 mb-1">
+              Last Name
+            </label>
+            <input
+              {...register("lastName")}
+              placeholder="Lastname"
+              className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-300"
+            />
+            {errors.lastName && (
+              <p className="text-sm text-red-600 mt-1">
+                {errors.lastName.message}
               </p>
             )}
           </div>
@@ -113,13 +125,13 @@ export default function Register() {
             </label>
             <input
               type="password"
-              {...register("password1")}
+              {...register("password")}
               placeholder="Password"
               className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-300"
             />
-            {errors.password1 && (
+            {errors.password && (
               <p className="text-sm text-red-600 mt-1">
-                {errors.password1.message}
+                {errors.password.message}
               </p>
             )}
           </div>
@@ -131,13 +143,13 @@ export default function Register() {
             </label>
             <input
               type="password"
-              {...register("password2")}
+              {...register("re_password")}
               placeholder="Confirm Password"
               className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-300"
             />
-            {errors.password2 && (
+            {errors.re_password && (
               <p className="text-sm text-red-600 mt-1">
-                {errors.password2.message}
+                {errors.re_password.message}
               </p>
             )}
           </div>
@@ -150,7 +162,7 @@ export default function Register() {
           >
             {loading ? (
               <svg
-                className="animate-spin h-5 w-5 text-white"
+                className="animate-spin h-5 w-5 text-black"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
