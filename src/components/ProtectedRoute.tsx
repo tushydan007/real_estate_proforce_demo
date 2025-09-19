@@ -1,14 +1,17 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
-import { getAuthToken, getUser } from "../lib/auth";
+import { Navigate, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../redux/store";
+import { getAuthToken } from "../lib/auth";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = getAuthToken();
-  const user = getUser();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const location = useLocation();
 
-  // Basic guard: token present. You can improve by calling /api/subscriptions/ check.
+  // Basic guard: token and user present
   if (!token || !user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
   return <>{children}</>;
 };

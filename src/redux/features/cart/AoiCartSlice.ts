@@ -11,8 +11,8 @@ export interface AoiCartItem {
   type: "Polygon" | "MultiPolygon" | "Rectangle";
   is_active: boolean;
   monitoring_enabled: boolean;
-  created_at: Date;
-  addedToCartAt: Date;
+  created_at: string; // ISO string for serialization
+  addedToCartAt: string; // ISO string for serialization
   // Optional metadata
   description?: string;
   tags?: string[];
@@ -26,10 +26,8 @@ interface AoiCartState {
 }
 
 const initialState: AoiCartState = {
-  items: [
-    // Sample AOI data for testing (remove in production)
-  ],
-  totalArea: 0, // Sum of areas above
+  items: [],
+  totalArea: 0,
   totalCount: 0,
 };
 
@@ -53,7 +51,8 @@ const aoiCartSlice = createSlice({
       if (!existing) {
         const newItem = {
           ...action.payload,
-          addedToCartAt: new Date(),
+          addedToCartAt: new Date().toISOString(),
+          created_at: new Date(action.payload.created_at).toISOString(),
         };
         state.items.push(newItem);
         state.totalCount += 1;
@@ -94,7 +93,6 @@ const aoiCartSlice = createSlice({
         if (action.payload.geometry) item.geometry = action.payload.geometry;
         if (action.payload.area !== undefined) {
           item.area = action.payload.area;
-          // Update total area
           state.totalArea = state.totalArea - oldArea + action.payload.area;
         }
         if (action.payload.coordinates)
@@ -115,16 +113,15 @@ const aoiCartSlice = createSlice({
       state.totalArea = 0;
       state.totalCount = 0;
     },
-    
 
-    // Bulk operations
     addMultipleAoisToCart(state, action: PayloadAction<AoiCartItem[]>) {
       action.payload.forEach((aoi) => {
         const existing = state.items.find((item) => item.id === aoi.id);
         if (!existing) {
           const newItem = {
             ...aoi,
-            addedToCartAt: new Date(),
+            addedToCartAt: new Date().toISOString(),
+            created_at: new Date(aoi.created_at).toISOString(),
           };
           state.items.push(newItem);
           state.totalCount += 1;
@@ -144,7 +141,6 @@ const aoiCartSlice = createSlice({
       });
     },
 
-    // Toggle monitoring for cart item
     toggleMonitoring(state, action: PayloadAction<number>) {
       const item = state.items.find((i) => i.id === action.payload);
       if (item) {
@@ -152,7 +148,6 @@ const aoiCartSlice = createSlice({
       }
     },
 
-    // Toggle active status for cart item
     toggleActive(state, action: PayloadAction<number>) {
       const item = state.items.find((i) => i.id === action.payload);
       if (item) {

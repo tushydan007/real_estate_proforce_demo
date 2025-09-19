@@ -376,8 +376,8 @@ class UploadControl extends L.Control {
               type: this.options.isRectangle(geom) ? "Rectangle" : geom.type,
               is_active: true,
               monitoring_enabled: false,
-              created_at: new Date(),
-              addedToCartAt: new Date(),
+              created_at: new Date().toISOString(),
+              addedToCartAt: new Date().toISOString(),
               description: `Uploaded AOI (${this.options.formatArea(area)})`,
               tags: ["uploaded", file.name.split(".")[0]],
             };
@@ -418,23 +418,72 @@ class UploadControl extends L.Control {
 
   private parseKML(
     xmlString: string
-  ): GeoJSON.FeatureCollection<GeoJSON.Polygon> {
+  ): GeoJSON.FeatureCollection<GeoJSON.Geometry> {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xmlString, "text/xml");
-    const features: GeoJSON.Feature<GeoJSON.Polygon>[] = [];
+    const features: GeoJSON.Feature<GeoJSON.Geometry>[] = [];
+    const processedPolygons = new Set<Element>();
 
-    // handle <Placemark> and also <Polygon> directly
+    // Handle <Placemark>s
     const placemarks = Array.from(doc.getElementsByTagName("Placemark"));
     placemarks.forEach((pm) => {
       const nameElement = pm.getElementsByTagName("name")[0];
       const name = nameElement?.textContent || "";
 
-      // handle Polygon or MultiGeometry containing polygons
-      const polygons = Array.from(pm.getElementsByTagName("Polygon"));
+      // Handle MultiGeometry first
+      const multiGeoms = Array.from(pm.getElementsByTagName("MultiGeometry"));
+      multiGeoms.forEach((multi) => {
+        const polysInMulti = Array.from(multi.getElementsByTagName("Polygon"));
+        const multiCoords: number[][][][] = [];
+        polysInMulti.forEach((polygon) => {
+          const coordsElements = Array.from(
+            polygon.getElementsByTagName("coordinates")
+          );
+          const rings: number[][][] = [];
+          coordsElements.forEach((coordsEl) => {
+            const coordsText = coordsEl.textContent;
+            if (!coordsText) return;
+            const coordPairs = coordsText
+              .trim()
+              .split(/\s+/)
+              .map((s) => s.trim())
+              .map((c) => c.split(","))
+              .filter((parts) => parts.length >= 2)
+              .map((parts) => [parseFloat(parts[0]), parseFloat(parts[1])]);
+
+            if (coordPairs.length >= 3) {
+              // Ensure closed ring
+              const first = coordPairs[0];
+              const last = coordPairs[coordPairs.length - 1];
+              if (first[0] !== last[0] || first[1] !== last[1]) {
+                coordPairs.push(first);
+              }
+              rings.push(coordPairs);
+            }
+          });
+          if (rings.length > 0) {
+            multiCoords.push(rings);
+          }
+          processedPolygons.add(polygon);
+        });
+        if (multiCoords.length > 0) {
+          features.push({
+            type: "Feature",
+            geometry: { type: "MultiPolygon", coordinates: multiCoords },
+            properties: { name },
+          });
+        }
+      });
+
+      // Handle direct <Polygon>s in Placemark (not in MultiGeometry)
+      const polygons = Array.from(pm.getElementsByTagName("Polygon")).filter(
+        (p) => !processedPolygons.has(p)
+      );
       polygons.forEach((polygon) => {
         const coordsElements = Array.from(
           polygon.getElementsByTagName("coordinates")
         );
+        const rings: number[][][] = [];
         coordsElements.forEach((coordsEl) => {
           const coordsText = coordsEl.textContent;
           if (!coordsText) return;
@@ -447,43 +496,60 @@ class UploadControl extends L.Control {
             .map((parts) => [parseFloat(parts[0]), parseFloat(parts[1])]);
 
           if (coordPairs.length >= 3) {
-            // ensure closed ring
-            const first = coordPairs[0],
-              last = coordPairs[coordPairs.length - 1];
-            if (first[0] !== last[0] || first[1] !== last[1])
+            // Ensure closed ring
+            const first = coordPairs[0];
+            const last = coordPairs[coordPairs.length - 1];
+            if (first[0] !== last[0] || first[1] !== last[1]) {
               coordPairs.push(first);
-            features.push({
-              type: "Feature",
-              geometry: { type: "Polygon", coordinates: [coordPairs] },
-              properties: { name },
-            });
+            }
+            rings.push(coordPairs);
           }
         });
+        if (rings.length > 0) {
+          features.push({
+            type: "Feature",
+            geometry: { type: "Polygon", coordinates: rings },
+            properties: { name },
+          });
+        }
+        processedPolygons.add(polygon);
       });
     });
 
-    // fallback: if KML had standalone <Polygon> nodes (outside placemarks)
-    const polygons = Array.from(doc.getElementsByTagName("Polygon"));
-    polygons.forEach((polygon) => {
-      const coordsEl = polygon.getElementsByTagName("coordinates")[0];
-      const coordsText = coordsEl?.textContent;
-      if (!coordsText) return;
-      const coordPairs = coordsText
-        .trim()
-        .split(/\s+/)
-        .map((s) => s.trim())
-        .map((c) => c.split(","))
-        .filter((parts) => parts.length >= 2)
-        .map((parts) => [parseFloat(parts[0]), parseFloat(parts[1])]);
+    // Fallback: standalone <Polygon> nodes (outside Placemarks)
+    const standalonePolygons = Array.from(
+      doc.getElementsByTagName("Polygon")
+    ).filter((p) => !processedPolygons.has(p));
+    standalonePolygons.forEach((polygon) => {
+      const coordsElements = Array.from(
+        polygon.getElementsByTagName("coordinates")
+      );
+      const rings: number[][][] = [];
+      coordsElements.forEach((coordsEl) => {
+        const coordsText = coordsEl.textContent;
+        if (!coordsText) return;
+        const coordPairs = coordsText
+          .trim()
+          .split(/\s+/)
+          .map((s) => s.trim())
+          .map((c) => c.split(","))
+          .filter((parts) => parts.length >= 2)
+          .map((parts) => [parseFloat(parts[0]), parseFloat(parts[1])]);
 
-      if (coordPairs.length >= 3) {
-        const first = coordPairs[0],
-          last = coordPairs[coordPairs.length - 1];
-        if (first[0] !== last[0] || first[1] !== last[1])
-          coordPairs.push(first);
+        if (coordPairs.length >= 3) {
+          // Ensure closed ring
+          const first = coordPairs[0];
+          const last = coordPairs[coordPairs.length - 1];
+          if (first[0] !== last[0] || first[1] !== last[1]) {
+            coordPairs.push(first);
+          }
+          rings.push(coordPairs);
+        }
+      });
+      if (rings.length > 0) {
         features.push({
           type: "Feature",
-          geometry: { type: "Polygon", coordinates: [coordPairs] },
+          geometry: { type: "Polygon", coordinates: rings },
           properties: {},
         });
       }
@@ -732,8 +798,8 @@ export const useAoiLayer = ({
           type: isRectangle(geoJson) ? "Rectangle" : geoJson.type,
           is_active: true,
           monitoring_enabled: false,
-          created_at: new Date(),
-          addedToCartAt: new Date(),
+          created_at: new Date().toISOString(),
+          addedToCartAt: new Date().toISOString(),
           description: `Auto-generated AOI with area ${formatArea(area)}`,
           tags: ["auto-generated", e.layerType],
         };
@@ -884,8 +950,13 @@ export const useAoiLayer = ({
               type: isRectangle(aoi.geometry) ? "Rectangle" : aoi.geometry.type,
               is_active: aoi.is_active,
               monitoring_enabled: aoi.monitoring_enabled,
-              created_at: aoi.created_at || new Date(),
-              addedToCartAt: new Date(),
+              created_at:
+                typeof aoi.created_at === "string"
+                  ? aoi.created_at
+                  : aoi.created_at
+                  ? aoi.created_at.toISOString()
+                  : new Date().toISOString(),
+              addedToCartAt: new Date().toISOString(),
               description: aoi.description,
               tags: aoi.tags,
             };
@@ -974,8 +1045,13 @@ export const useAoiLayer = ({
                   : aoi.geometry.type,
                 is_active: aoi.is_active,
                 monitoring_enabled: aoi.monitoring_enabled,
-                created_at: aoi.created_at || new Date(),
-                addedToCartAt: new Date(),
+                created_at:
+                  typeof aoi.created_at === "string"
+                    ? aoi.created_at
+                    : aoi.created_at
+                    ? aoi.created_at.toISOString()
+                    : new Date().toISOString(),
+                addedToCartAt: new Date().toISOString(),
                 description: aoi.description,
                 tags: aoi.tags,
               };
@@ -1051,8 +1127,13 @@ export const useAoiLayer = ({
           type: isRectangle(aoi.geometry) ? "Rectangle" : aoi.geometry.type,
           is_active: aoi.is_active,
           monitoring_enabled: aoi.monitoring_enabled,
-          created_at: aoi.created_at || new Date(),
-          addedToCartAt: new Date(),
+          created_at:
+            typeof aoi.created_at === "string"
+              ? aoi.created_at
+              : aoi.created_at
+              ? aoi.created_at.toISOString()
+              : new Date().toISOString(),
+          addedToCartAt: new Date().toISOString(),
           description: aoi.description,
           tags: aoi.tags,
         };

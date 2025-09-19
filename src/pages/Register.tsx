@@ -39,7 +39,7 @@ export default function Register() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
@@ -157,10 +157,14 @@ export default function Register() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-white hover:bg-white/80 text-black font-medium py-2 px-4 rounded-lg flex justify-center items-center cursor-pointer"
+            disabled={!isValid || isSubmitting}
+            className={`w-full py-2 px-4 rounded-lg flex items-center justify-center font-medium transition ${
+              !isValid || isSubmitting
+                ? "bg-[#3c3c3c] text-gray-400 cursor-not-allowed"
+                : "bg-white text-black cursor-pointer"
+            }`}
           >
-            {loading ? (
+            {loading && (
               <svg
                 className="animate-spin h-5 w-5 text-black"
                 xmlns="http://www.w3.org/2000/svg"
@@ -181,9 +185,8 @@ export default function Register() {
                   d="M4 12a8 8 0 018-8v8z"
                 ></path>
               </svg>
-            ) : (
-              "Create Account"
             )}
+            {loading ? "Registering..." : "Create Account"}
           </button>
         </form>
         {/* Footer with login link */}

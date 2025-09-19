@@ -1,6 +1,8 @@
+import { store } from "../redux/store";
+import { setUser, clearUser } from "../redux/features/auth/authSlice";
+import type { User } from "../redux/features/auth/authSlice";
+
 const TOKEN_KEY = "auth_token";
-const USER_KEY = "user";
-import type { User } from "@/types";
 
 export function saveAuthToken(token: string) {
   localStorage.setItem(TOKEN_KEY, token);
@@ -12,19 +14,12 @@ export function getAuthToken(): string | null {
 
 export function clearAuthToken() {
   localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USER_KEY);
 }
 
 export function saveUser(user: User | null) {
-  if (user) {
-    localStorage.setItem(USER_KEY, JSON.stringify(user));
-  } else {
-    localStorage.removeItem(USER_KEY);
-  }
+  store.dispatch(setUser(user));
 }
 
-export function getUser() {
-  const raw = localStorage.getItem(USER_KEY);
-  if (!raw) return null;
-  return JSON.parse(raw);
+export function clearUserData() {
+  store.dispatch(clearUser());
 }
