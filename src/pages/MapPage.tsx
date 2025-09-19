@@ -37,7 +37,7 @@ const MapPage = () => {
   };
 
   return (
-    <div style={{ height: "100vh", width: "100%" }}>
+    <div className="w-full h-[calc(100vh-64px)]">
       <MapComponent
         aois={aois}
         onCreate={handleCreate}
