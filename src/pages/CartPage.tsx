@@ -478,7 +478,7 @@ const AoiCartPage = () => {
               </div>
               <Button
                 onClick={handleProceedToAnalysis}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg w-full"
+                className="bg-gradient-to-r cursor-pointer from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg w-full"
                 disabled={cartItems.length === 0 || durationValue < 1}
                 aria-label="Proceed to checkout"
               >
