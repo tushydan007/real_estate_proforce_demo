@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -18,9 +18,36 @@ import CheckoutPage from "./pages/CheckOutPage";
 import PaymentSuccessPage from "./pages/payments/PaymentSuccessPage";
 import PaymentFailedPage from "./pages/payments/PaymentFailedPage";
 import MapHighlightPage from "./pages/MapHighlightPage";
+import type { AppDispatch } from "./redux/store";
 import Careers from "./pages/CareersPage";
+import LoadingSpinner from "./components/LoadingSpinner";
+import { initializeAuth, validateToken } from "./redux/features/auth/authSlice";
+import { useDispatch } from "react-redux";
+import { useAuth } from "./hooks/useAuth";
+import { useEffect } from "react";
 
 const App = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    // Initialize auth state from localStorage on app start
+    dispatch(initializeAuth());
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Periodically validate token
+    const interval = setInterval(() => {
+      dispatch(validateToken());
+    }, 5 * 60 * 1000); // Check every 5 minutes
+
+    return () => clearInterval(interval);
+  }, [dispatch]);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col w-full max-w-full overflow-x-hidden">
       <Navbar />
@@ -28,7 +55,6 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/password-reset" element={<ForgotPassword />} />
           <Route path="/contact-us" element={<ContactUs />} />
@@ -36,6 +62,12 @@ const App = () => {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/map-page" element={<MapPage />} />
           <Route path="/map" element={<MapHighlightPage />} />
+          <Route
+            path="/login"
+            element={
+              isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
+            }
+          />
           {/* <Route path="/subscription" element={<Subscription />} /> */}
           <Route path="/careers" element={<Careers />} />
           <Route

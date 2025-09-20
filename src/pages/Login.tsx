@@ -5,9 +5,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import client from "../lib/client";
-import { saveAuthToken, saveUser } from "../lib/auth";
 import type { AxiosError } from "axios";
 import { motion } from "framer-motion";
+// Import Redux hooks and actions
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../redux/store";
+import { setToken } from "../redux/features/auth/authSlice";
 
 // Validation schema
 const loginSchema = z.object({
@@ -19,7 +22,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
-  const location = useLocation(); // Added to access previous URL
+  const location = useLocation();
+  const dispatch = useDispatch<AppDispatch>();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -34,16 +38,27 @@ export default function Login() {
   async function onSubmit(values: LoginFormData) {
     try {
       const { data } = await client.post("/api/auth/jwt/create/", values);
+      console.log(data);
 
+      // Extract token from various possible response formats
       const token = data?.key || data?.token || data?.access;
-      if (token) saveAuthToken(token);
-      if (data?.user) saveUser(data.user);
+
+      if (!token) {
+        throw new Error("No authentication token received");
+      }
+
+      // Use Redux action to store token and automatically decode user
+      dispatch(setToken(token));
 
       toast.success("Login successful 🎉");
 
       // Check if there's a previous URL in location.state
       const from = location.state?.from?.pathname || "/";
-      navigate(from, { replace: true });
+
+      // Small delay to ensure Redux state is updated before navigation
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 100);
     } catch (err: unknown) {
       let errorMsg = "Something went wrong. Please try again.";
 
@@ -51,6 +66,8 @@ export default function Login() {
         const axiosErr = err as AxiosError<{
           detail?: string;
           non_field_errors?: string[];
+          email?: string[];
+          password?: string[];
         }>;
         const respData = axiosErr.response?.data;
 
@@ -58,12 +75,23 @@ export default function Login() {
           errorMsg = respData.detail;
         } else if (Array.isArray(respData?.non_field_errors)) {
           errorMsg = respData.non_field_errors[0];
+        } else if (respData?.email && Array.isArray(respData.email)) {
+          errorMsg = `Email: ${respData.email[0]}`;
+        } else if (respData?.password && Array.isArray(respData.password)) {
+          errorMsg = `Password: ${respData.password[0]}`;
+        } else if (axiosErr.response?.status === 401) {
+          errorMsg = "Invalid email or password";
+        } else if (axiosErr.response?.status === 429) {
+          errorMsg = "Too many login attempts. Please try again later.";
         } else {
           errorMsg = axiosErr.message || errorMsg;
         }
+      } else if (err instanceof Error) {
+        errorMsg = err.message;
       }
 
       toast.error(errorMsg);
+      console.error("Login error:", err);
     }
   }
 
@@ -119,6 +147,7 @@ export default function Login() {
               {...register("email")}
               className="mt-1 w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 text-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
               placeholder="Enter your email"
+              disabled={isSubmitting}
             />
             {errors.email && (
               <p className="mt-1 text-sm text-red-600">
@@ -148,12 +177,14 @@ export default function Login() {
                 {...register("password")}
                 className="mt-1 w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 text-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
                 placeholder="Enter your password"
+                disabled={isSubmitting}
               />
               <button
                 type="button"
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-200"
+                disabled={isSubmitting}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-200 disabled:opacity-50"
               >
                 {showPassword ? (
                   // Eye-off icon
@@ -213,10 +244,10 @@ export default function Login() {
             type="submit"
             disabled={!isValid || isSubmitting}
             whileTap={{ scale: 0.95 }}
-            className={`w-full flex items-center justify-center rounded-lg py-2 px-4 font-medium transition ${
+            className={`w-full flex items-center justify-center rounded-lg py-2 px-4 font-medium transition-all duration-200 ${
               !isValid || isSubmitting
                 ? "cursor-not-allowed bg-[#3c3c3c] text-gray-400"
-                : "cursor-pointer bg-white text-black hover:bg-gray-200"
+                : "cursor-pointer bg-white text-black hover:bg-gray-200 transform hover:scale-[1.02]"
             }`}
           >
             {isSubmitting ? (
@@ -260,15 +291,15 @@ export default function Login() {
             <div className="flex flex-col items-center gap-2 pt-4 sm:flex-row sm:justify-between sm:gap-6">
               <Link
                 to="/password-reset"
-                className="text-sm text-blue-600 hover:underline"
+                className="text-sm text-blue-600 hover:underline transition-colors duration-200 hover:text-blue-400"
               >
                 Forgot password?
               </Link>
               <Link
                 to="/register"
-                className="text-sm text-blue-600 hover:underline"
+                className="text-sm text-blue-600 hover:underline transition-colors duration-200 hover:text-blue-400"
               >
-                Don’t have an account?{" "}
+                Don't have an account?{" "}
                 <span className="font-medium">Register</span>
               </Link>
             </div>
@@ -279,8 +310,20 @@ export default function Login() {
   );
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 // import { useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
+// import { Link, useNavigate, useLocation } from "react-router-dom";
 // import { useForm } from "react-hook-form";
 // import { z } from "zod";
 // import { zodResolver } from "@hookform/resolvers/zod";
@@ -288,9 +331,13 @@ export default function Login() {
 // import client from "../lib/client";
 // import { saveAuthToken, saveUser } from "../lib/auth";
 // import type { AxiosError } from "axios";
-// import { motion } from "framer-motion"; // ✅ Animations
+// import { motion } from "framer-motion";
+// // Import Redux hooks and actions
+// import { useDispatch } from "react-redux";
+// import type { AppDispatch } from "../redux/store";
+// import { setUser } from "../redux/features/auth/authSlice";
 
-// // ✅ Validation schema
+// // Validation schema
 // const loginSchema = z.object({
 //   email: z.string().email("Invalid email address"),
 //   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -300,6 +347,8 @@ export default function Login() {
 
 // export default function Login() {
 //   const navigate = useNavigate();
+//   const location = useLocation();
+//   const dispatch = useDispatch<AppDispatch>();
 //   const [showPassword, setShowPassword] = useState(false);
 
 //   const {
@@ -314,13 +363,25 @@ export default function Login() {
 //   async function onSubmit(values: LoginFormData) {
 //     try {
 //       const { data } = await client.post("/api/auth/jwt/create/", values);
+//       console.log(data)
 
 //       const token = data?.key || data?.token || data?.access;
 //       if (token) saveAuthToken(token);
-//       if (data?.user) saveUser(data.user);
+//       if (data?.user) {
+//         saveUser(data.user);
+//         // Dispatch user data to Redux store
+//         dispatch(setUser(data.user));
+//       }
 
 //       toast.success("Login successful 🎉");
-//       navigate("/dashboard", { replace: true });
+
+//       // Check if there's a previous URL in location.state
+//       const from = location.state?.from?.pathname || "/";
+
+//       // Small delay to ensure Redux state is updated before navigation
+//       setTimeout(() => {
+//         navigate(from, { replace: true });
+//       }, 100);
 //     } catch (err: unknown) {
 //       let errorMsg = "Something went wrong. Please try again.";
 
@@ -489,7 +550,7 @@ export default function Login() {
 //           <motion.button
 //             type="submit"
 //             disabled={!isValid || isSubmitting}
-//             whileTap={{ scale: 0.95 }} // ✅ press effect
+//             whileTap={{ scale: 0.95 }}
 //             className={`w-full flex items-center justify-center rounded-lg py-2 px-4 font-medium transition ${
 //               !isValid || isSubmitting
 //                 ? "cursor-not-allowed bg-[#3c3c3c] text-gray-400"
@@ -545,7 +606,7 @@ export default function Login() {
 //                 to="/register"
 //                 className="text-sm text-blue-600 hover:underline"
 //               >
-//                 Don’t have an account?{" "}
+//                 Don't have an account?{" "}
 //                 <span className="font-medium">Register</span>
 //               </Link>
 //             </div>
