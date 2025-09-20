@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -28,7 +28,7 @@ import { useEffect } from "react";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   useEffect(() => {
     // Initialize auth state from localStorage on app start
@@ -62,12 +62,7 @@ const App = () => {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/map-page" element={<MapPage />} />
           <Route path="/map" element={<MapHighlightPage />} />
-          <Route
-            path="/login"
-            element={
-              isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
-            }
-          />
+          <Route path="/login" element={<Login />} />
           {/* <Route path="/subscription" element={<Subscription />} /> */}
           <Route path="/careers" element={<Careers />} />
           <Route
