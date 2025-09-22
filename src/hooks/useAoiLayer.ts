@@ -173,6 +173,9 @@ const getGeometryCentroid = (
 /**
  * Fetch region name using Nominatim reverse geocoding
  */
+/**
+ * Fetch region name using Nominatim reverse geocoding
+ */
 const getRegionName = async (
   geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon
 ): Promise<string> => {
@@ -185,7 +188,7 @@ const getRegionName = async (
           lat,
           lon: lng,
           format: "json",
-          zoom: 10, // Adjust zoom level to get region-level data (e.g., city or state)
+          zoom: 14, // City-level zoom for more specific locality (e.g., city/town/village)
         },
         headers: {
           "User-Agent": "YourAppName/1.0 (your.email@example.com)", // Required by Nominatim
@@ -194,11 +197,13 @@ const getRegionName = async (
     );
 
     const { address } = response.data;
-    // Prioritize city, then state, then country as region name
+    // Prioritize city/town/village for specificity, then fall back to state/county/country
     const region =
       address.city ||
       address.town ||
       address.village ||
+      address.city_district ||
+      address.suburb ||
       address.state ||
       address.county ||
       address.country ||

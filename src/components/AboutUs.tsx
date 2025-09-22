@@ -32,7 +32,7 @@ const team = [
     id: 1,
     name: "Engr. Ade Ogundeyin",
     role: "Group Managing Director",
-    image: "/assets/team/gmd.jpg",
+    image: "/assets/team/GMD-image.jpg",
   },
   {
     id: 2,

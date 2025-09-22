@@ -116,7 +116,7 @@ export default function Login() {
         </motion.h2>
 
         {/* Show where user will be redirected if they came from a protected route */}
-        {location.state?.from && (
+        {/* {location.state?.from && (
           <motion.div
             className="mb-4 rounded-lg bg-blue-900/20 border border-blue-600/30 p-3"
             initial={{ opacity: 0, y: 10 }}
@@ -127,7 +127,7 @@ export default function Login() {
               You'll be redirected to your intended page after login
             </p>
           </motion.div>
-        )}
+        )} */}
 
         <motion.form
           onSubmit={handleSubmit(onSubmit)}

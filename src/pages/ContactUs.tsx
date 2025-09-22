@@ -108,7 +108,7 @@ const ContactUs: React.FC = () => {
       {/* Hero Section */}
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
         <motion.div
-          className="absolute inset-0 bg-[url('./assets/customer-care.jpg')] bg-cover bg-center bg-fixed opacity-40"
+          className="absolute inset-0 bg-[url('./assets/customer-service.png')] bg-cover bg-center bg-fixed opacity-40"
           style={{ backgroundAttachment: "fixed" }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.4 }}

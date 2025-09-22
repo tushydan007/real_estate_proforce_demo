@@ -5,7 +5,7 @@ const Monitoring = () => {
   return (
     <section
       id="plans"
-      className="relative w-full py-20 px-4 md:px-8 lg:px-16 bg-black/70 backdrop-blur-sm text-white text-center"
+      className="relative w-full pb-20 px-4 md:px-8 lg:px-16 bg-black/70 backdrop-blur-sm text-white text-center"
     >
       <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-12">
         Start Monitoring Today

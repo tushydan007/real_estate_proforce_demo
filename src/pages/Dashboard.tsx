@@ -33,6 +33,7 @@ import {
   Area,
 } from "recharts";
 import type { Feature } from "geojson";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 // Mock client for demo purposes
 const client = {
@@ -79,11 +80,11 @@ type AOI = {
 type TimeFilter = "7d" | "30d" | "90d" | "all";
 type StatusFilter = "all" | "active" | "inactive";
 
-const LoadingSpinner = () => (
-  <div className="flex items-center justify-center h-64">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-  </div>
-);
+// const LoadingSpinner = () => (
+//   <div className="flex items-center justify-center h-64">
+//     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+//   </div>
+// );
 
 const ErrorBoundary = ({ children }: { children: React.ReactNode }) => {
   const [hasError, setHasError] = useState(false);

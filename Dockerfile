@@ -5,7 +5,7 @@ ARG NODE_VERSION=22.18.0
 FROM node:${NODE_VERSION}-alpine AS builder
 
 # Set working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Set environment variables for development
 ENV NODE_ENV=development
@@ -26,13 +26,13 @@ COPY . .
 FROM node:${NODE_VERSION}-alpine
 
 # Set working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Set environment variables for development
 ENV NODE_ENV=development \
     PORT=5173 \
     HOST=0.0.0.0 \
-    VITE_CACHE_DIR=/usr/src/app/.vite-cache
+    VITE_CACHE_DIR=/app/.vite-cache
 
 # Install runtime dependencies
 RUN apk add --no-cache curl
@@ -40,14 +40,14 @@ RUN apk add --no-cache curl
 # Create non-root user and group
 RUN addgroup -g 1001 -S nodejs \
     && adduser -S nodeuser -u 1001 -G nodejs \
-    && mkdir -p /usr/src/app/.vite-cache \
-    && chown -R nodeuser:nodejs /usr/src/app /usr/src/app/.vite-cache
+    && mkdir -p /app/.vite-cache \
+    && chown -R nodeuser:nodejs /app /app/.vite-cache
 
 # Run as non-root user for security
 USER nodeuser
 
 # Copy built artifacts from builder stage
-COPY --from=builder --chown=nodeuser:nodejs /usr/src/app ./
+COPY --from=builder --chown=nodeuser:nodejs /app ./
 
 # Ensure node_modules and vite cache are writable
 RUN mkdir -p node_modules/.vite && chown -R nodeuser:nodejs node_modules/.vite
