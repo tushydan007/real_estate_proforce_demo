@@ -8,7 +8,7 @@ export interface AoiCartItem {
   geometry: GeoJSON.Polygon | GeoJSON.MultiPolygon;
   area: number; // in square meters
   coordinates: string; // formatted coordinate string
-  type: "Polygon" | "MultiPolygon" | "Rectangle";
+  type: "Polygon" | "MultiPolygon" | "Rectangle" | "Circle";
   is_active: boolean;
   monitoring_enabled: boolean;
   created_at: string; // ISO string for serialization
