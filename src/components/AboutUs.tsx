@@ -32,7 +32,7 @@ const team = [
     id: 1,
     name: "Engr. Ade Ogundeyin",
     role: "Group Managing Director",
-    image: "/assets/team/GMD-image.jpg",
+    image: "/assets/team/gmdd.png",
   },
   {
     id: 2,
@@ -44,7 +44,7 @@ const team = [
     id: 3,
     name: "Engr. Tope Robert",
     role: "CTO",
-    image: "/assets/team/managerpga.jpg",
+    image: "/assets/team/manager.jpg",
   },
 ];
 
@@ -275,7 +275,7 @@ export default function AboutUs() {
               <img
                 src={member.image}
                 alt={member.name}
-                className="w-40 h-40 rounded-full object-cover mb-4 border-2 border-primary/20"
+                className="w-2/4 h-full rounded-full object-cover mb-4 border-2 border-primary/20"
               />
               <h3 className="text-lg font-semibold text-white">
                 {member.name}
