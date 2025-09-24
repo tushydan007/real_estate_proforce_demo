@@ -121,8 +121,13 @@ export default function Dashboard() {
   const loadData = useCallback(async () => {
     try {
       setError(null);
-      const res = await client.get("/api/aois/my/");
-      setAois(res.data);
+      const res = await client.get();
+      setAois(
+        res.data.map((aoi) => ({
+          ...aoi,
+          status: aoi.status === "active" ? "active" : "inactive",
+        }))
+      );
     } catch (e) {
       console.error(e);
       setError("Failed to load your AOIs. Please try again later.");
