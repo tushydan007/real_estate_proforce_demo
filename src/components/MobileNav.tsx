@@ -66,7 +66,7 @@ export function MobileNav() {
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-xl text-blue-700 font-['kavoon']">
                     <img
-                      src="./assets/team/asset2.png"
+                      src="./assets/team/preferred.png"
                       alt="Logo"
                       className="w-24 h-full object-cover"
                     />
