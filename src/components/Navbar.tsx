@@ -34,7 +34,7 @@ const Navbar = () => {
           to="/"
           className="font-normal text-2xl bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text font-['kavoon']"
         >
-          ASSET WATCH
+          <img src="/assets/team/logo2.png" alt="Logo" className="w-16 h-full object-contain" />
         </Link>
 
         {/* Desktop Nav */}
