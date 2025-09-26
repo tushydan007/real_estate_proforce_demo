@@ -43,7 +43,7 @@ const team = [
   {
     id: 3,
     name: "Engr. Tope Robert",
-    role: "CTO",
+    role: "Manager",
     image: "/assets/team/manager.jpg",
   },
 ];

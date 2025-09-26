@@ -61,11 +61,15 @@ export function MobileNav() {
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="fixed top-0 right-0 z-50 h-screen w-64 bg-gray-100 shadow-xl p-6 flex flex-col gap-6"
+                className="fixed top-0 right-0 z-50 h-screen w-64 bg-black shadow-xl p-6 flex flex-col gap-6"
               >
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-xl text-blue-700 font-['kavoon']">
-                    ASSET WATCH
+                    <img
+                      src="./assets/team/asset2.png"
+                      alt="Logo"
+                      className="w-24 h-full object-cover"
+                    />
                   </span>
                   <SheetClose asChild>
                     <Button
@@ -73,7 +77,7 @@ export function MobileNav() {
                       size="icon"
                       onClick={() => setOpen(false)}
                     >
-                      <X className="h-6 w-6" />
+                      <X className="h-6 w-6 text-gray-200 border-2 border-gray-200 rounded-full" />
                       <span className="sr-only">Close</span>
                     </Button>
                   </SheetClose>
@@ -105,7 +109,7 @@ export function MobileNav() {
                 )}
 
                 {/* Nav Links */}
-                <nav className="flex flex-col gap-4 text-lg">
+                <nav className="flex flex-col gap-4 text-lg text-gray-200">
                   <NavLink
                     to="/map-page"
                     onClick={() => setOpen(false)}
@@ -170,12 +174,6 @@ export function MobileNav() {
     </div>
   );
 }
-
-
-
-
-
-
 
 // import { Sheet, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 // import { Button } from "@/components/ui/button";
