@@ -61,7 +61,7 @@ export function MobileNav() {
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="fixed top-0 right-0 z-50 h-screen w-64 bg-black shadow-xl p-6 flex flex-col gap-6"
+                className="fixed top-0 right-0 z-50 h-screen w-64 bg-[#101828] shadow-xl p-6 flex flex-col gap-6"
               >
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-xl text-blue-700 font-['kavoon']">
@@ -151,7 +151,7 @@ export function MobileNav() {
                         </Button>
                       </Link>
                       <Link to="/register" onClick={() => setOpen(false)}>
-                        <Button className="w-full">Get Started</Button>
+                        <Button className="w-full bg-black">Get Started</Button>
                       </Link>
                     </>
                   ) : (
