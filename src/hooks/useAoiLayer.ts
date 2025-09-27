@@ -218,7 +218,7 @@ const generateAoiName = async (
   index: number
 ): Promise<string> => {
   const region = await getRegionName(geometry);
-  return `${region} #${index}`;
+  return `${region} AOI #${index}`;
 };
 
 const isRectangle = (
