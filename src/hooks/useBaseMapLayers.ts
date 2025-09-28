@@ -39,7 +39,7 @@ export const useBaseMapLayers = (map: Map) => {
       CartoLight: cartoLight,
     };
 
-    activeLayerRef.current = baseMaps.OpenStreetMap;
+    activeLayerRef.current = baseMaps.Satellite;
     activeLayerRef.current.addTo(map);
 
     const control = L.control
