@@ -27,7 +27,7 @@ const PayWithPaystackPage = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [localOrderId, setLocalOrderId] = useState<string | null>(null);
-  const publicKey = "pk_test_70f892f6bae08e1df5b0f2db0f93907ee1c212dd"; // Replace with your actual public key
+  const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || ""; // Replace with your actual public key
 
   useEffect(() => {
     if (!aoiItems || aoiItems.length === 0) {

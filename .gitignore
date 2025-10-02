@@ -27,6 +27,7 @@ pnpm-debug.log*
 .env.production.local
 .env.docker
 *.env.*
+.env
 
 # editor directories and files
 .vscode/*
