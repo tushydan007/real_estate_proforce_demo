@@ -25,6 +25,9 @@ import { initializeAuth, validateToken } from "./redux/features/auth/authSlice";
 import { useDispatch } from "react-redux";
 import { useAuth } from "./hooks/useAuth";
 import { useEffect } from "react";
+import PayWithStripePage from "./pages/payments/PayWithStripe";
+import PayWithPaystackPage from "./pages/payments/PayWithPaystack";
+import PayWithPayPalPage from "./pages/payments/PayWithPaypal";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -98,11 +101,35 @@ const App = () => {
             }
           />
           <Route
+            path="/pay-with-stripe"
+            element={
+              // <ProtectedRoute>
+              <PayWithStripePage />
+              // </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pay-with-paystack"
+            element={
+              // <ProtectedRoute>
+                <PayWithPaystackPage />
+              // </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pay-with-paypal"
+            element={
+              // <ProtectedRoute>
+                <PayWithPayPalPage />
+              // </ProtectedRoute>
+            }
+          />
+          <Route
             path="/checkout"
             element={
-              <ProtectedRoute>
-                <CheckoutPage orderId="123456" />
-              </ProtectedRoute>
+              // <ProtectedRoute>
+              <CheckoutPage orderId="123456" />
+              // </ProtectedRoute>
             }
           />
         </Routes>
