@@ -1,4 +1,3 @@
-// src/pages/PayWithPayPalPage.tsx
 "use client";
 
 import { useSelector } from "react-redux";
@@ -533,6 +532,7 @@ const PayWithPayPalPage = () => {
   const [convertedAmount, setConvertedAmount] = useState(totalCost);
   const [currencyLoading, setCurrencyLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates | null>(
     null
   );
@@ -768,6 +768,10 @@ const PayWithPayPalPage = () => {
       data: CreateOrderData,
       actions: CreateOrderActions
     ): Promise<string> => {
+      // Log create order parameters for debugging
+      console.debug("PayPal createOrder data:", data);
+      console.debug("PayPal createOrder actions:", actions);
+
       // Validate email before proceeding
       if (!email.trim()) {
         toast.error("Please enter your email address.", {
@@ -872,6 +876,9 @@ const PayWithPayPalPage = () => {
   // ========== PayPal Approve Handler ==========
   const onApprove = useCallback(
     async (data: OnApproveData, actions: OnApproveActions): Promise<void> => {
+      // Log approve actions for debugging
+      console.debug("PayPal onApprove actions:", actions);
+
       setLoading(true);
 
       try {
@@ -1237,18 +1244,21 @@ const PayWithPayPalPage = () => {
                     <Command>
                       <CommandInput
                         placeholder="Search country..."
+                        value={searchValue}
+                        onValueChange={setSearchValue}
                         className="bg-zinc-800 border-b-zinc-600 text-white"
                       />
                       <CommandList>
                         <CommandEmpty>No country found.</CommandEmpty>
                         <CommandGroup>
-                          {COUNTRIES.map((c) => (
+                          {filterCountries(searchValue, COUNTRIES).map((c) => (
                             <CommandItem
                               key={c.value}
                               value={c.value}
                               onSelect={() => {
                                 setCountry(c.value === country ? "" : c.value);
                                 setOpen(false);
+                                setSearchValue("");
                               }}
                               className="flex items-center gap-2 cursor-pointer text-white hover:bg-zinc-700"
                             >
