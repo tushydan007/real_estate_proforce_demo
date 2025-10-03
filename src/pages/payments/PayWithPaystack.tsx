@@ -1,4 +1,3 @@
-// src/pages/PayWithPaystackPage.tsx
 "use client";
 
 import { useSelector } from "react-redux";
@@ -8,12 +7,102 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import axios, { AxiosError } from "axios";
+import { useEffect, useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import PaystackPop from "@paystack/inline-js";
 
+// ========== Type Definitions ==========
+interface PaystackTransaction {
+  reference: string;
+  status?: string;
+  [key: string]: unknown;
+}
+
+interface PaystackError {
+  message: string;
+  [key: string]: unknown;
+}
+
+interface PaystackMetadata {
+  order_id: string;
+  total_cost: number;
+  custom_fields?: Array<{
+    display_name: string;
+    variable_name: string;
+    value: string;
+  }>;
+}
+
+interface PaystackTransactionOptions {
+  key: string;
+  reference: string;
+  email: string;
+  amount: number;
+  currency: string;
+  metadata: PaystackMetadata;
+  onSuccess: (transaction: PaystackTransaction) => void;
+  onClose: () => void;
+  onError?: (error: PaystackError) => void;
+}
+
+interface LocationState {
+  aoiItems?: Array<{
+    id: string;
+    name: string;
+    area: number;
+    type: string;
+  }>;
+  durationType?: "days" | "months" | "years";
+  durationValue?: number;
+  totalCost?: number;
+}
+
+interface OrderPayload {
+  items: Array<{
+    id: string;
+    name: string;
+    area: number;
+    type: string;
+    monitoring_enabled: boolean;
+    is_active: boolean;
+  }>;
+  email: string;
+  duration: {
+    type: string;
+    value: number;
+  };
+  total_cost: number;
+}
+
+// ========== Constants ==========
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "";
+const PAYSTACK_CURRENCY = import.meta.env.VITE_PAYSTACK_CURRENCY || "USD";
+const MIN_AMOUNT = 0.01;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// ========== Utility Functions ==========
+const validateEmail = (email: string): boolean => {
+  return EMAIL_REGEX.test(email.trim());
+};
+
+const getAuthToken = (): string => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Authentication token not found");
+  }
+  return token;
+};
+
+const convertToKobo = (amount: number): number => {
+  // Paystack expects amount in smallest currency unit (kobo for NGN, cents for USD, etc.)
+  return Math.round(amount * 100);
+};
+
+// ========== Main Component ==========
 const PayWithPaystackPage = () => {
   const cartItems = useSelector((state: RootState) => state.aoiCart.items);
   const navigate = useNavigate();
@@ -23,21 +112,156 @@ const PayWithPaystackPage = () => {
     durationType = "months",
     durationValue = 1,
     totalCost = 0,
-  } = location.state || {};
+  } = (location.state as LocationState) || {};
+
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [localOrderId, setLocalOrderId] = useState<string | null>(null);
-  const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || ""; // Replace with your actual public key
+
+  // ========== Validation ==========
+  useEffect(() => {
+    if (!PAYSTACK_PUBLIC_KEY) {
+      console.error("Paystack public key is not configured");
+      toast.error("Payment configuration error. Please contact support.", {
+        style: { background: "#1f2937", color: "#fff" },
+        icon: "⚠️",
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (!aoiItems || aoiItems.length === 0) {
-      navigate("/checkout");
+      toast.error("No items found. Redirecting to checkout...", {
+        style: { background: "#1f2937", color: "#fff" },
+        icon: "⚠️",
+      });
+      navigate("/checkout", { replace: true });
     }
-  }, [aoiItems, navigate]);
 
+    if (totalCost < MIN_AMOUNT) {
+      toast.error("Invalid order amount. Redirecting to checkout...", {
+        style: { background: "#1f2937", color: "#fff" },
+        icon: "⚠️",
+      });
+      navigate("/checkout", { replace: true });
+    }
+  }, [aoiItems, totalCost, navigate]);
+
+  // ========== Email Validation ==========
+  const handleEmailChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setEmail(value);
+
+      if (value && !validateEmail(value)) {
+        setEmailError("Please enter a valid email address");
+      } else {
+        setEmailError("");
+      }
+    },
+    []
+  );
+
+  // ========== Order Creation ==========
+  const createOrder = async (userEmail: string): Promise<string> => {
+    try {
+      const orderPayload: OrderPayload = {
+        items: cartItems.map((item) => ({
+          id: String(item.id),
+          name: item.name,
+          area: item.area,
+          type: String(item.type),
+          monitoring_enabled: true,
+          is_active: true,
+        })),
+        email: userEmail,
+        duration: { type: durationType, value: durationValue },
+        total_cost: totalCost,
+      };
+
+      const response = await axios.post(
+        `${API_BASE_URL}/orders/create/`,
+        orderPayload,
+        {
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`,
+            "Content-Type": "application/json",
+          },
+          timeout: 10000, // 10 second timeout
+        }
+      );
+
+      if (!response.data?.order_id) {
+        throw new Error("Invalid response from server");
+      }
+
+      return response.data.order_id;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ detail?: string }>;
+
+        if (axiosError.response?.status === 401) {
+          toast.error("Session expired. Please log in again.", {
+            style: { background: "#1f2937", color: "#fff" },
+            icon: "🔒",
+          });
+          navigate("/login", { replace: true });
+          throw new Error("Authentication failed");
+        }
+
+        const errorMessage =
+          axiosError.response?.data?.detail || axiosError.message;
+        throw new Error(errorMessage);
+      }
+
+      throw error;
+    }
+  };
+
+  // ========== Payment Verification (Optional) ==========
+  const verifyPayment = async (reference: string): Promise<boolean> => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/payments/verify/${reference}`,
+        { email },
+        {
+          headers: {
+            Authorization: `Bearer ${getAuthToken()}`,
+            "Content-Type": "application/json",
+          },
+          timeout: 10000,
+        }
+      );
+
+      return response.data?.status === "success";
+    } catch (error) {
+      console.error("Payment verification failed:", error);
+      return false;
+    }
+  };
+
+  // ========== Paystack Payment Handler ==========
   const handlePaystackPayment = async () => {
-    if (!email) {
+    // Validation
+    if (!email.trim()) {
       toast.error("Please enter your email address.", {
+        style: { background: "#1f2937", color: "#fff" },
+        icon: "⚠️",
+      });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast.error("Please enter a valid email address.", {
+        style: { background: "#1f2937", color: "#fff" },
+        icon: "⚠️",
+      });
+      return;
+    }
+
+    if (!PAYSTACK_PUBLIC_KEY) {
+      toast.error("Payment system not configured. Please contact support.", {
         style: { background: "#1f2937", color: "#fff" },
         icon: "⚠️",
       });
@@ -47,154 +271,225 @@ const PayWithPaystackPage = () => {
     setLoading(true);
 
     try {
+      // Create or retrieve order ID
       let currentOrderId = localOrderId;
       if (!currentOrderId) {
-        const orderRes = await axios.post(
-          "http://127.0.0.1:8000/orders/create/",
-          {
-            items: cartItems.map((item) => ({
-              id: item.id,
-              name: item.name,
-              area: item.area,
-              type: item.type,
-              monitoring_enabled: true,
-              is_active: true,
-            })),
-            email,
-            duration: { type: durationType, value: durationValue },
-            total_cost: totalCost,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        currentOrderId = orderRes.data.order_id;
+        currentOrderId = await createOrder(email.trim());
         setLocalOrderId(currentOrderId);
       }
 
-      // Use Paystack Inline Popup for embedded form
+      // Initialize Paystack
       const paystack = new PaystackPop();
-      interface PaystackTransaction {
-        reference: string;
-        [key: string]: unknown;
-      }
+      const amount = convertToKobo(totalCost);
 
-      interface PaystackError {
-        message: string;
-        [key: string]: unknown;
-      }
-
-      interface PaystackMetadata {
-        order_id: string;
-        total_cost: number;
-      }
-
-      interface PaystackTransactionOptions {
-        key: string;
-        reference: string;
-        email: string;
-        amount: number;
-        currency: string;
-        metadata: PaystackMetadata;
-        onSuccess: (transaction: PaystackTransaction) => void;
-        onClose: () => void;
-        onError: (error: PaystackError) => void;
-      }
-
-      paystack.newTransaction({
-        key: publicKey,
-        reference: currentOrderId as string, // Use order ID as transaction reference for easy backend matching
-        email,
-        amount: totalCost * 100, // In cents for USD (adjust for NGN kobo if needed)
-        currency: "USD", // Adjust if using NGN
+      const transactionOptions: PaystackTransactionOptions = {
+        key: PAYSTACK_PUBLIC_KEY,
+        reference: currentOrderId,
+        email: email.trim(),
+        amount,
+        currency: PAYSTACK_CURRENCY,
         metadata: {
-          order_id: currentOrderId as string,
+          order_id: currentOrderId,
           total_cost: totalCost,
+          custom_fields: [
+            {
+              display_name: "Order ID",
+              variable_name: "order_id",
+              value: currentOrderId,
+            },
+            {
+              display_name: "Duration",
+              variable_name: "duration",
+              value: `${durationValue} ${durationType}`,
+            },
+          ],
         },
-        onSuccess: (transaction: PaystackTransaction) => {
-          //   console.log("Payment successful:", transaction);
-          alert(`Successful! Ref: ${transaction.reference}`);
-          // Optional: Verify on backend here (POST to /verify/${reference})
-          // await axios.post(`/verify/${transaction.reference}`, { email });
-          toast.success("Payment successful! Redirecting...", {
+        onSuccess: async (transaction: PaystackTransaction) => {
+          console.log("Payment successful:", transaction.reference);
+
+          toast.success("Payment successful! Verifying...", {
             style: { background: "#1f2937", color: "#fff" },
             icon: "✅",
+            duration: 2000,
           });
-          navigate(`/paystack/callback/${transaction.reference}`); // Or your success route
+
+          // Optional: Verify payment on backend
+          const verified = await verifyPayment(transaction.reference);
+
+          if (verified) {
+            setTimeout(() => {
+              navigate(`/paystack/callback/${transaction.reference}`, {
+                replace: true,
+                state: { verified: true },
+              });
+            }, 1000);
+          } else {
+            // Still redirect but flag as unverified
+            navigate(`/paystack/callback/${transaction.reference}`, {
+              replace: true,
+              state: { verified: false },
+            });
+          }
         },
-        onClose: (): void => {
-          console.log("Payment cancelled");
+        onClose: () => {
+          console.log("Payment cancelled by user");
           toast("Payment was cancelled.", {
             style: { background: "#1f2937", color: "#fff" },
-            icon: "❌",
+            icon: "ℹ️",
           });
+          setLoading(false);
         },
-        onError: (error: PaystackError): void => {
+        onError: (error: PaystackError) => {
           console.error("Paystack error:", error);
-          toast.error("Payment error occurred. Please try again.", {
-            style: { background: "#1f2937", color: "#fff" },
-            icon: "❌",
-          });
+          toast.error(
+            error.message || "Payment error occurred. Please try again.",
+            {
+              style: { background: "#1f2937", color: "#fff" },
+              icon: "❌",
+            }
+          );
+          setLoading(false);
         },
-      } as PaystackTransactionOptions);
+      };
+
+      paystack.newTransaction(transactionOptions);
     } catch (err) {
       console.error("Payment initiation failed:", err);
-      toast.error("Failed to initiate payment. Please try again.", {
+
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to initiate payment. Please try again.";
+
+      toast.error(errorMessage, {
         style: { background: "#1f2937", color: "#fff" },
         icon: "❌",
       });
-    } finally {
+
       setLoading(false);
     }
   };
 
+  // ========== Render ==========
   return (
     <div className="w-full min-h-screen bg-black text-white py-12 px-4 md:px-8">
-      <Toaster position="top-right" />
+      <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+
       <motion.div
         className="max-w-md mx-auto"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="bg-zinc-900 border border-zinc-800 rounded-2xl">
-          <CardHeader className="p-6">
+        <Card className="bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl">
+          <CardHeader className="p-6 border-b border-zinc-800">
             <CardTitle className="text-xl font-semibold text-gray-200 text-center">
-              Pay with Paystack
+              Complete Your Payment
             </CardTitle>
+            <p className="text-sm text-gray-400 text-center mt-2">
+              Secure payment powered by Paystack
+            </p>
           </CardHeader>
-          <CardContent className="p-6 space-y-4">
-            <div>
-              <Label htmlFor="email" className="text-gray-300 mb-2">
-                Email Address
+
+          <CardContent className="p-6 space-y-6">
+            {/* Order Summary */}
+            <div className="bg-zinc-800 rounded-lg p-4 space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Items</span>
+                <span className="text-gray-200">{cartItems.length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">Duration</span>
+                <span className="text-gray-200">
+                  {durationValue} {durationType}
+                </span>
+              </div>
+              <div className="flex justify-between text-lg font-semibold pt-2 border-t border-zinc-700">
+                <span className="text-gray-200">Total</span>
+                <span className="text-green-400">
+                  ${totalCost.toFixed(2)} {PAYSTACK_CURRENCY}
+                </span>
+              </div>
+            </div>
+
+            {/* Email Input */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-300">
+                Email Address *
               </Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
                 placeholder="your@email.com"
-                className="bg-zinc-800 border-zinc-600 text-white"
+                className={`bg-zinc-800 border ${
+                  emailError ? "border-red-500" : "border-zinc-600"
+                } text-white focus:border-green-500 transition-colors`}
                 required
+                disabled={loading}
+                aria-invalid={!!emailError}
+                aria-describedby={emailError ? "email-error" : undefined}
               />
+              {emailError && (
+                <p id="email-error" className="text-red-400 text-sm mt-1">
+                  {emailError}
+                </p>
+              )}
             </div>
+
+            {/* Pay Button */}
             <Button
               onClick={handlePaystackPayment}
-              disabled={loading || !email}
-              className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-semibold py-3 rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg"
+              disabled={
+                loading || !email.trim() || !!emailError || !PAYSTACK_PUBLIC_KEY
+              }
+              className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-semibold py-3 rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              aria-label={`Pay ${totalCost.toFixed(2)} ${PAYSTACK_CURRENCY}`}
             >
-              {loading ? "Processing..." : `Pay $${totalCost.toFixed(2)}`}
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Processing...
+                </span>
+              ) : (
+                `Pay ${totalCost.toFixed(2)} ${PAYSTACK_CURRENCY}`
+              )}
             </Button>
-            <Button
+
+            {/* Back Button */}
+            {/* <Button
               onClick={() => navigate("/checkout")}
               variant="outline"
-              className="w-full bg-zinc-800 border-zinc-600 hover:bg-zinc-700 text-gray-200"
+              className="w-full bg-zinc-800 border-zinc-600 hover:bg-zinc-700 text-gray-200 transition-colors"
+              disabled={loading}
             >
               Back to Checkout
-            </Button>
+            </Button> */}
+
+            {/* Security Notice */}
+            <p className="text-xs text-gray-500 text-center mt-4">
+              🔒 Your payment is secure and encrypted
+            </p>
           </CardContent>
         </Card>
       </motion.div>
@@ -203,161 +498,3 @@ const PayWithPaystackPage = () => {
 };
 
 export default PayWithPaystackPage;
-
-// // src/pages/PayWithPaystackPage.tsx
-// "use client";
-
-// import { useSelector } from "react-redux";
-// import type { RootState } from "../../redux/store";
-// import { useNavigate, useLocation } from "react-router-dom";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { motion } from "framer-motion";
-// import toast, { Toaster } from "react-hot-toast";
-// import axios from "axios";
-// import { useEffect, useState } from "react";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-
-// const PayWithPaystackPage = () => {
-//   const cartItems = useSelector((state: RootState) => state.aoiCart.items);
-//   const navigate = useNavigate();
-//   const location = useLocation();
-//   const {
-//     aoiItems,
-//     durationType = "months",
-//     durationValue = 1,
-//     totalCost = 0,
-//   } = location.state || {};
-//   const [loading, setLoading] = useState(false);
-//   const [email, setEmail] = useState("");
-//   const [localOrderId, setLocalOrderId] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     if (!aoiItems || aoiItems.length === 0) {
-//       navigate("/checkout");
-//     }
-//   }, [aoiItems, navigate]);
-
-//   const handlePaystackPayment = async () => {
-//     if (!email) {
-//       toast.error("Please enter your email address.", {
-//         style: { background: "#1f2937", color: "#fff" },
-//         icon: "⚠️",
-//       });
-//       return;
-//     }
-
-//     setLoading(true);
-
-//     try {
-//       let currentOrderId = localOrderId;
-//       if (!currentOrderId) {
-//         const orderRes = await axios.post(
-//           "http://127.0.0.1:8000/orders/create/",
-//           {
-//             items: cartItems.map((item) => ({
-//               id: item.id,
-//               name: item.name,
-//               area: item.area,
-//               type: item.type,
-//               monitoring_enabled: true,
-//               is_active: true,
-//             })),
-//             email,
-//             duration: { type: durationType, value: durationValue },
-//             total_cost: totalCost,
-//           },
-//           {
-//             headers: {
-//               Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-//               "Content-Type": "application/json",
-//             },
-//           }
-//         );
-//         currentOrderId = orderRes.data.order_id;
-//         setLocalOrderId(currentOrderId);
-//       }
-
-//       const res = await axios.post(
-//         "http://127.0.0.1:8000/checkout/paystack/",
-//         {
-//           items: cartItems,
-//           email,
-//           orderId: currentOrderId,
-//           totalCost: totalCost,
-//           callback_url: `${window.location.origin}/paystack/callback/`,
-//         },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-//             "Content-Type": "application/json",
-//           },
-//         }
-//       );
-
-//       // Redirect to Paystack hosted payment page
-//       window.location.href = res.data.data.authorization_url;
-//     } catch (err) {
-//       console.error("Paystack initiation failed:", err);
-//       toast.error("Failed to initiate Paystack payment. Please try again.", {
-//         style: { background: "#1f2937", color: "#fff" },
-//         icon: "❌",
-//       });
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="w-full min-h-screen bg-black text-white py-12 px-4 md:px-8">
-//       <Toaster position="top-right" />
-//       <motion.div
-//         className="max-w-md mx-auto"
-//         initial={{ opacity: 0, y: 20 }}
-//         animate={{ opacity: 1, y: 0 }}
-//         transition={{ duration: 0.3 }}
-//       >
-//         <Card className="bg-zinc-900 border border-zinc-800 rounded-2xl">
-//           <CardHeader className="p-6">
-//             <CardTitle className="text-xl font-semibold text-gray-200 text-center">
-//               Pay with Paystack
-//             </CardTitle>
-//           </CardHeader>
-//           <CardContent className="p-6 space-y-4">
-//             <div>
-//               <Label htmlFor="email" className="text-gray-300 mb-2">
-//                 Email Address
-//               </Label>
-//               <Input
-//                 id="email"
-//                 type="email"
-//                 value={email}
-//                 onChange={(e) => setEmail(e.target.value)}
-//                 placeholder="your@email.com"
-//                 className="bg-zinc-800 border-zinc-600 text-white"
-//                 required
-//               />
-//             </div>
-//             <Button
-//               onClick={handlePaystackPayment}
-//               disabled={loading || !email}
-//               className="w-full bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-semibold py-3 rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg"
-//             >
-//               {loading ? "Processing..." : `Pay $${totalCost.toFixed(2)}`}
-//             </Button>
-//             <Button
-//               onClick={() => navigate("/checkout")}
-//               variant="outline"
-//               className="w-full bg-zinc-800 border-zinc-600 hover:bg-zinc-700 text-gray-200"
-//             >
-//               Back to Checkout
-//             </Button>
-//           </CardContent>
-//         </Card>
-//       </motion.div>
-//     </div>
-//   );
-// };
-
-// export default PayWithPaystackPage;

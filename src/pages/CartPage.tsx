@@ -525,15 +525,6 @@ const AoiCartPage = () => {
 
 export default AoiCartPage;
 
-
-
-
-
-
-
-
-
-
 // STARTING POINT FOR TODAY
 // import { useState, useMemo } from "react";
 // import { Button } from "@/components/ui/button";
