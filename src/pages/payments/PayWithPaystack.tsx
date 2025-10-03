@@ -401,7 +401,10 @@ const PayWithPaystackPage = () => {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Duration</span>
                 <span className="text-gray-200">
-                  {durationValue} {durationType}
+                  {durationValue}{" "}
+                  {durationValue === 1
+                    ? durationType.replace(/s$/, "")
+                    : durationType}
                 </span>
               </div>
               <div className="flex justify-between text-lg font-semibold pt-2 border-t border-zinc-700">

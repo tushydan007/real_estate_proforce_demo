@@ -1149,7 +1149,10 @@ const PayWithPayPalPage = () => {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Duration</span>
                 <span className="text-gray-200">
-                  {durationValue} {durationType}
+                  {durationValue}{" "}
+                  {durationValue === 1
+                    ? durationType.replace(/s$/, "")
+                    : durationType}
                 </span>
               </div>
               <div className="flex justify-between text-lg font-semibold pt-2 border-t border-zinc-700">
@@ -1240,8 +1243,8 @@ const PayWithPayPalPage = () => {
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0 bg-zinc-800 border-zinc-600 text-white max-h-60">
-                    <Command>
+                  <PopoverContent className="md:w-[394px] w-56 p-0 bg-zinc-800 border-zinc-600 text-white max-h-60">
+                    <Command className="bg-[#27272A] text-gray-200">
                       <CommandInput
                         placeholder="Search country..."
                         value={searchValue}
