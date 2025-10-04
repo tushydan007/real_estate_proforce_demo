@@ -826,7 +826,7 @@ export const useAoiLayer = ({
           : `<div><strong>Points:</strong> ${latlngs.length}</div>
              <div style='font-size:10px;color:#9ca3af;'>Coords: ${coordinates}</div>`;
 
-      // showTooltip(txt);
+      showTooltip(txt);
     };
 
     function onDrawStop() {

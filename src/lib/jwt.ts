@@ -1,5 +1,3 @@
-
-// lib/jwt.ts - JWT utility functions
 export interface JWTPayload {
   user_id?: number;
   id?: number;
@@ -15,19 +13,22 @@ export interface JWTPayload {
  */
 export const decodeJWT = (token: string): JWTPayload | null => {
   try {
-    const parts = token.split('.');
+    const parts = token.split(".");
     if (parts.length !== 3) {
-      throw new Error('Invalid JWT format');
+      throw new Error("Invalid JWT format");
     }
 
     const payload = parts[1];
-    const paddedPayload = payload.padEnd(payload.length + (4 - payload.length % 4) % 4, '=');
-    const base64 = paddedPayload.replace(/-/g, '+').replace(/_/g, '/');
+    const paddedPayload = payload.padEnd(
+      payload.length + ((4 - (payload.length % 4)) % 4),
+      "="
+    );
+    const base64 = paddedPayload.replace(/-/g, "+").replace(/_/g, "/");
     const decodedPayload = JSON.parse(atob(base64));
-    
+
     return decodedPayload;
   } catch (error) {
-    console.error('Error decoding JWT:', error);
+    console.error("Error decoding JWT:", error);
     return null;
   }
 };
@@ -40,7 +41,7 @@ export const isTokenExpired = (token: string): boolean => {
   if (!payload || !payload.exp) {
     return true;
   }
-  
+
   return payload.exp * 1000 < Date.now();
 };
 
@@ -51,6 +52,6 @@ export const getUserFromToken = (token: string): JWTPayload | null => {
   if (!token || isTokenExpired(token)) {
     return null;
   }
-  
+
   return decodeJWT(token);
 };

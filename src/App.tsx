@@ -79,17 +79,17 @@ const App = () => {
           <Route
             path="/payment-success"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <PaymentSuccessPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
           <Route
             path="/payment-failed"
             element={
-              <ProtectedRoute>
+              // <ProtectedRoute>
                 <PaymentFailedPage />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
           <Route
