@@ -1,4 +1,3 @@
-// MY FALLBACK CODE/* ---------------------------*/ THAT HAS CIRCLE DRAWING
 import L from "leaflet";
 import "leaflet-draw";
 import type { Map, DrawMap } from "leaflet";
@@ -54,18 +53,24 @@ interface UseAoiLayerProps {
 
 const createTooltip = () => {
   const tooltip = document.createElement("div");
-  tooltip.style.position = "fixed";
+  tooltip.style.position = "absolute";
+  tooltip.style.top = "75px";
+  tooltip.style.right = "70px";
+  tooltip.style.height = "50px";
   tooltip.style.pointerEvents = "none";
   tooltip.style.background = "rgba(0,0,0,0.9)";
   tooltip.style.color = "#fff";
   tooltip.style.padding = "8px 12px";
   tooltip.style.borderRadius = "6px";
   tooltip.style.fontSize = "12px";
+  tooltip.style.fontFamily = "Arial, sans-serif";
+  tooltip.style.lineHeight = "1.4";
+  tooltip.style.wordBreak = "break-word";
+  tooltip.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)";
   tooltip.style.zIndex = "9999";
   tooltip.style.transition = "opacity 0.2s";
   tooltip.style.opacity = "0.95";
   tooltip.style.maxWidth = "300px";
-  tooltip.style.wordWrap = "break-word";
   document.body.appendChild(tooltip);
   return tooltip;
 };
@@ -753,22 +758,23 @@ export const useAoiLayer = ({
   }, [map, onCreate, dispatch, autoAddEnabled, aois.length]);
 
   useEffect(() => {
-    let drawing = false;
     let mousePos = { x: 0, y: 0 };
+    let drawing = false;
 
     function showTooltip(content: string) {
       if (!tooltipRef.current) tooltipRef.current = createTooltip();
       tooltipRef.current.innerHTML = content;
       tooltipRef.current.style.display = "block";
       if (tooltipRafRef.current) cancelAnimationFrame(tooltipRafRef.current);
-      tooltipRafRef.current = requestAnimationFrame(() => {
-        const { x, y } = mousePos;
-        if (tooltipRef.current) {
-          tooltipRef.current.style.left = x + 15 + "px";
-          tooltipRef.current.style.top = y + 15 + "px";
-        }
-      });
+      // tooltipRafRef.current = requestAnimationFrame(() => {
+      //   const { x, y } = mousePos;
+      //   if (tooltipRef.current) {
+      //     tooltipRef.current.style.left = x + 15 + "px";
+      //     tooltipRef.current.style.top = y + 15 + "px";
+      //   }
+      // });
     }
+
     function hideTooltip() {
       if (tooltipRafRef.current) {
         cancelAnimationFrame(tooltipRafRef.current);
@@ -780,16 +786,18 @@ export const useAoiLayer = ({
 
     function onDrawStart() {
       drawing = true;
-      showTooltip(`<div>Start drawing AOI...</div>
-        <div style='color:${
-          autoAddEnabled ? "#10b981" : "#9ca3af"
-        }; font-size:10px'>
-          ${
-            autoAddEnabled
-              ? "✓ Will auto-add to cart"
-              : "Manual cart management"
-          }
-        </div>`);
+      showTooltip(`
+          <div>Start drawing AOI...</div>
+          <div style='color:${
+            autoAddEnabled ? "#10b981" : "#9ca3af"
+          }; font-size:12px'>
+            ${
+              autoAddEnabled
+                ? "✓ AOIs will auto-add to cart after creation"
+                : "Manual cart management"
+            }
+          </div>
+        `);
     }
 
     const drawVertexHandler = (event: L.LeafletEvent) => {
@@ -818,7 +826,7 @@ export const useAoiLayer = ({
           : `<div><strong>Points:</strong> ${latlngs.length}</div>
              <div style='font-size:10px;color:#9ca3af;'>Coords: ${coordinates}</div>`;
 
-      showTooltip(txt);
+      // showTooltip(txt);
     };
 
     function onDrawStop() {

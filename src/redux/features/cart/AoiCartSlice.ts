@@ -172,7 +172,7 @@ export const selectIsInCart = (state: { aoiCart: AoiCartState }, id: number) =>
   state.aoiCart.items.some((item) => item.id === id);
 
 // Utility functions for formatting
-export const formatArea = (area: number): string => {
+export const   formatArea = (area: number): string => {
   if (area > 1000000) return `${(area / 1000000).toFixed(2)} km²`;
   if (area > 10000) return `${(area / 10000).toFixed(2)} ha`;
   return `${area.toFixed(2)} m²`;
