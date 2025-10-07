@@ -179,11 +179,19 @@ export default function Features() {
                 key={feature.id}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.15, duration: 0.7 }}
                 viewport={{ once: true }}
+                whileHover={{ scale: 1.02, y: -5 }}
+                transition={{
+                  delay: index * 0.15,
+                  duration: 0.7,
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20,
+                }}
               >
                 <TiltCard>
-                  <Card className="h-full cursor-pointer border border-gray-700 bg-gray-900/70 backdrop-blur-md shadow-lg hover:shadow-xl transition-shadow rounded-2xl">
+                  <Card className="h-full cursor-pointer border border-gray-700 bg-gray-900/70 backdrop-blur-md shadow-lg hover:shadow-2xl hover:border-blue-600/50 transition-all duration-300 rounded-2xl relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <CardHeader>
                       <motion.div
                         animate={{ y: [0, -5, 0] }}
@@ -192,16 +200,16 @@ export default function Features() {
                           duration: 3,
                           ease: "easeInOut",
                         }}
-                        className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/80 text-white mb-4 mx-auto"
+                        className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/80 text-white mb-4 mx-auto relative z-10"
                       >
                         <Icon className="w-6 h-6" />
                       </motion.div>
-                      <CardTitle className="text-lg font-semibold text-center text-white">
+                      <CardTitle className="text-lg font-semibold text-center text-white relative z-10">
                         {feature.title}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-gray-400 text-center">
+                      <p className="text-sm text-gray-400 text-center relative z-10">
                         {feature.description}
                       </p>
                     </CardContent>
