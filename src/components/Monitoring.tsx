@@ -11,12 +11,12 @@ const Monitoring = () => {
         Start Monitoring Today
       </h2>
 
-      <Link to="/register">
+      <Link to="/map-page">
         <Button
           size="lg"
           className="bg-gradient-to-r cursor-pointer from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg"
         >
-          Explore
+          Explore Map
         </Button>
       </Link>
     </section>

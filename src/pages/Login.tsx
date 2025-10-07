@@ -101,7 +101,7 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-black px-4">
       <motion.div
-        className="w-full max-w-md rounded-2xl bg-[#0C111C] p-8 shadow-lg"
+        className="w-full max-w-2xl rounded-2xl bg-[#0C111C] p-12 shadow-lg"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -114,20 +114,6 @@ export default function Login() {
         >
           Login
         </motion.h2>
-
-        {/* Show where user will be redirected if they came from a protected route */}
-        {/* {location.state?.from && (
-          <motion.div
-            className="mb-4 rounded-lg bg-blue-900/20 border border-blue-600/30 p-3"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.4 }}
-          >
-            <p className="text-sm text-blue-300">
-              You'll be redirected to your intended page after login
-            </p>
-          </motion.div>
-        )} */}
 
         <motion.form
           onSubmit={handleSubmit(onSubmit)}
@@ -151,7 +137,7 @@ export default function Login() {
           >
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-200"
+              className="block text-sm font-medium text-gray-200 mb-1"
             >
               Email
             </label>
@@ -160,7 +146,7 @@ export default function Login() {
               type="email"
               autoComplete="email"
               {...register("email")}
-              className="mt-1 w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 text-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[#1a1a2e] border-gray-600 text-white placeholder-gray-500 transition"
               placeholder="Enter your email"
               disabled={isSubmitting}
             />
@@ -190,7 +176,7 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 {...register("password")}
-                className="w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 pr-10 text-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+                className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[#1a1a2e] border-gray-600 text-white placeholder-gray-500 transition"
                 placeholder="Enter your password"
                 disabled={isSubmitting}
               />

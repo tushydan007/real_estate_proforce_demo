@@ -50,39 +50,39 @@ const UserTypes = () => {
             viewport={{ once: true }}
             whileHover={{ scale: 1.02, y: -5 }}
           >
-            <Card className="h-full border border-gray-700 bg-gray-900/70 backdrop-blur-md shadow-lg hover:shadow-2xl hover:border-blue-600/50 transition-all duration-300 rounded-2xl relative overflow-hidden group cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <CardHeader className="text-center">
-                <motion.div
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 3,
-                    ease: "easeInOut",
-                  }}
-                  className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/80 text-white mb-4 mx-auto relative z-10"
-                >
-                  <User className="w-6 h-6" />
-                </motion.div>
-                <CardTitle className="text-xl font-semibold text-white relative z-10">
-                  Monitor AOI as a Regular User
-                </CardTitle>
-                <p className="text-sm text-gray-400 relative z-10">
-                  For individuals who want to monitor personal areas of interest
-                  with ease and precision.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <Link to="/register?type=user">
+            <Link to="/register">
+              <Card className="h-full border border-gray-700 bg-gray-900/70 backdrop-blur-md shadow-lg hover:shadow-2xl hover:border-blue-600/50 transition-all duration-300 rounded-2xl relative overflow-hidden group cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardHeader className="text-center">
+                  <motion.div
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 3,
+                      ease: "easeInOut",
+                    }}
+                    className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/80 text-white mb-4 mx-auto relative z-10"
+                  >
+                    <User className="w-6 h-6" />
+                  </motion.div>
+                  <CardTitle className="text-xl font-semibold text-white relative z-10">
+                    Monitor AOI as a Regular User
+                  </CardTitle>
+                  <p className="text-sm text-gray-400 relative z-10">
+                    For individuals who want to monitor personal areas of
+                    interest with ease and precision.
+                  </p>
+                </CardHeader>
+                <CardContent>
                   <Button
                     size="lg"
                     className="w-full bg-gradient-to-r cursor-pointer from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg"
                   >
                     Get Started
                   </Button>
-                </Link>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -91,39 +91,39 @@ const UserTypes = () => {
             whileHover={{ scale: 1.02, y: -5 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            <Card className="h-full border border-gray-700 bg-gray-900/70 backdrop-blur-md shadow-lg hover:shadow-2xl hover:border-blue-600/50 transition-all duration-300 rounded-2xl relative overflow-hidden group cursor-pointer">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <CardHeader className="text-center">
-                <motion.div
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 3,
-                    ease: "easeInOut",
-                  }}
-                  className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/80 text-white mb-4 mx-auto relative z-10"
-                >
-                  <Building2 className="w-6 h-6" />
-                </motion.div>
-                <CardTitle className="text-xl font-semibold text-white relative z-10">
-                  Monitor AOI as an Organization
-                </CardTitle>
-                <p className="text-sm text-gray-400 relative z-10">
-                  For businesses like real estate companies to monitor and
-                  manage multiple areas of interest at scale.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <Link to="/register?type=org">
+            <Link to="/organizational-registration">
+              <Card className="h-full border border-gray-700 bg-gray-900/70 backdrop-blur-md shadow-lg hover:shadow-2xl hover:border-blue-600/50 transition-all duration-300 rounded-2xl relative overflow-hidden group cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardHeader className="text-center">
+                  <motion.div
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 3,
+                      ease: "easeInOut",
+                    }}
+                    className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/80 text-white mb-4 mx-auto relative z-10"
+                  >
+                    <Building2 className="w-6 h-6" />
+                  </motion.div>
+                  <CardTitle className="text-xl font-semibold text-white relative z-10">
+                    Monitor AOI as an Organization
+                  </CardTitle>
+                  <p className="text-sm text-gray-400 relative z-10">
+                    For businesses like real estate companies to monitor and
+                    manage multiple areas of interest at scale.
+                  </p>
+                </CardHeader>
+                <CardContent>
                   <Button
                     size="lg"
                     className="w-full bg-gradient-to-r cursor-pointer from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg"
                   >
                     Get Started
                   </Button>
-                </Link>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           </motion.div>
         </div>
       </section>

@@ -28,6 +28,7 @@ import { useEffect } from "react";
 import PayWithStripePage from "./pages/payments/PayWithStripe";
 import PayWithPaystackPage from "./pages/payments/PayWithPaystack";
 import PayWithPayPalPage from "./pages/payments/PayWithPaypal";
+import OrganizationalRegForm from "./pages/OrganizationalRegForm";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,6 +59,10 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
+          <Route
+            path="/organizational-registration"
+            element={<OrganizationalRegForm />}
+          />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/password-reset" element={<ForgotPassword />} />
           <Route path="/contact-us" element={<ContactUs />} />
@@ -80,7 +85,7 @@ const App = () => {
             path="/payment-success"
             element={
               // <ProtectedRoute>
-                <PaymentSuccessPage />
+              <PaymentSuccessPage />
               // </ProtectedRoute>
             }
           />
@@ -88,7 +93,7 @@ const App = () => {
             path="/payment-failed"
             element={
               // <ProtectedRoute>
-                <PaymentFailedPage />
+              <PaymentFailedPage />
               // </ProtectedRoute>
             }
           />
@@ -112,7 +117,7 @@ const App = () => {
             path="/pay-with-paystack"
             element={
               // <ProtectedRoute>
-                <PayWithPaystackPage />
+              <PayWithPaystackPage />
               // </ProtectedRoute>
             }
           />
@@ -120,7 +125,7 @@ const App = () => {
             path="/pay-with-paypal"
             element={
               // <ProtectedRoute>
-                <PayWithPayPalPage />
+              <PayWithPayPalPage />
               // </ProtectedRoute>
             }
           />

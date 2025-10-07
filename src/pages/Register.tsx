@@ -64,18 +64,18 @@ export default function Register() {
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4 bg-black">
-      <div className="w-full max-w-md p-6 rounded-2xl shadow-lg bg-[#0C111C] text-gray-200">
+      <div className="w-full max-w-2xl p-12 rounded-2xl shadow-lg bg-[#0C111C] text-gray-200">
         <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* First Name */}
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
-              First Name
+              First Name <span className="text-red-500">*</span>
             </label>
             <input
               {...register("firstName")}
               placeholder="Firstname"
-              className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-300"
+              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[#1a1a2e] border-gray-600 text-white placeholder-gray-500 transition"
             />
             {errors.firstName && (
               <p className="text-sm text-red-600 mt-1">
@@ -87,12 +87,12 @@ export default function Register() {
           {/* Last Name */}
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
-              Last Name
+              Last Name <span className="text-red-500">*</span>
             </label>
             <input
               {...register("lastName")}
               placeholder="Lastname"
-              className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-300"
+              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[#1a1a2e] border-gray-600 text-white placeholder-gray-500 transition"
             />
             {errors.lastName && (
               <p className="text-sm text-red-600 mt-1">
@@ -104,12 +104,12 @@ export default function Register() {
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
             <input
               {...register("email")}
               placeholder="Email"
-              className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-300"
+              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[#1a1a2e] border-gray-600 text-white placeholder-gray-500 transition"
             />
             {errors.email && (
               <p className="text-sm text-red-600 mt-1">
@@ -121,13 +121,13 @@ export default function Register() {
           {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
-              Password
+              Password <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
               {...register("password")}
               placeholder="Password"
-              className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-300"
+              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[#1a1a2e] border-gray-600 text-white placeholder-gray-500 transition"
             />
             {errors.password && (
               <p className="text-sm text-red-600 mt-1">
@@ -139,13 +139,13 @@ export default function Register() {
           {/* Confirm Password */}
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
-              Confirm Password
+              Confirm Password <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
               {...register("re_password")}
               placeholder="Confirm Password"
-              className="w-full border rounded-lg px-3 py-2 focus:ring focus:ring-indigo-300"
+              className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[#1a1a2e] border-gray-600 text-white placeholder-gray-500 transition"
             />
             {errors.re_password && (
               <p className="text-sm text-red-600 mt-1">
