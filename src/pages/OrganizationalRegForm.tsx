@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -77,12 +77,11 @@ const organizationalRegSchema = z
       .min(2, "Industry type must be at least 2 characters")
       .max(100, "Industry type must not exceed 100 characters")
       .trim(),
-    companyAddress: z
-      .string()
-      .min(1, "Company address is required")
-      .min(10, "Company address must be at least 10 characters")
-      .max(200, "Company address must not exceed 200 characters")
-      .trim(),
+    companySize: z
+      .number()
+      .min(1, "Company size must be at least 1 employee")
+      .max(1000000, "Company size must not exceed 1,000,000 employees")
+      .positive("Company size must be a positive number"),
     email: z
       .string()
       .min(1, "Email is required")
@@ -155,6 +154,31 @@ const safeLocalStorage = {
   },
 };
 
+// Helper function to check if saved data has meaningful content
+const hasValidSavedData = (
+  data: Partial<OrganizationalRegFormData>
+): boolean => {
+  if (!data || typeof data !== "object") return false;
+
+  // Check if any field has a non-empty value (excluding passwords for security)
+  const relevantFields: (keyof OrganizationalRegFormData)[] = [
+    "companyName",
+    "rcNumber",
+    "industryType",
+    "companySize",
+    "email",
+    "phoneNumber",
+    "website",
+    "country",
+    "region",
+  ];
+
+  return relevantFields.some((field) => {
+    const value = data[field];
+    return value && typeof value === "string" && value.trim().length > 0;
+  });
+};
+
 // ============= MAIN COMPONENT =============
 export default function OrganizationalRegForm() {
   const navigate = useNavigate();
@@ -163,6 +187,9 @@ export default function OrganizationalRegForm() {
   const [countries, setCountries] = useState<Country[]>([]);
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
   const [phoneDialCode, setPhoneDialCode] = useState("");
+
+  // Use ref to prevent duplicate toast notifications
+  const toastShownRef = useRef(false);
 
   const totalSteps = 3;
   const steps = [
@@ -186,7 +213,7 @@ export default function OrganizationalRegForm() {
       companyName: "",
       rcNumber: "",
       industryType: "",
-      companyAddress: "",
+      companySize: 0,
       email: "",
       password: "",
       re_password: "",
@@ -274,20 +301,37 @@ export default function OrganizationalRegForm() {
     loadCountries();
   }, []);
 
-  // ============= LOAD AUTOSAVED DATA =============
+  // ============= LOAD AUTOSAVED DATA (FIXED) =============
   useEffect(() => {
+    // Prevent running multiple times
     if (hasLoadedSavedData) return;
 
     try {
       const savedData = safeLocalStorage.getItem(AUTOSAVE_KEY);
+
       if (savedData) {
         const parsedData: Partial<OrganizationalRegFormData> =
           JSON.parse(savedData);
 
-        // Only load if data exists and is valid
-        if (Object.keys(parsedData).length > 0) {
-          reset(parsedData as OrganizationalRegFormData);
-          toast.success("Previous form data restored");
+        // Only load and show toast if there's actually meaningful data
+        if (hasValidSavedData(parsedData)) {
+          // Clear passwords for security (don't restore passwords)
+          const dataToRestore = {
+            ...parsedData,
+            password: "",
+            re_password: "",
+          };
+
+          reset(dataToRestore as OrganizationalRegFormData);
+
+          // Show toast only once using ref guard
+          if (!toastShownRef.current) {
+            toastShownRef.current = true;
+            toast.success("Previous form data restored", {
+              duration: 3000,
+              id: "form-restored", // Unique ID prevents duplicate toasts
+            });
+          }
         }
       }
     } catch (error) {
@@ -308,7 +352,13 @@ export default function OrganizationalRegForm() {
 
     if (hasData) {
       const timeoutId = setTimeout(() => {
-        safeLocalStorage.setItem(AUTOSAVE_KEY, JSON.stringify(watchedData));
+        // Don't save passwords for security
+        const dataToSave = {
+          ...watchedData,
+          password: "",
+          re_password: "",
+        };
+        safeLocalStorage.setItem(AUTOSAVE_KEY, JSON.stringify(dataToSave));
       }, 1000); // Debounce autosave
 
       return () => clearTimeout(timeoutId);
@@ -375,7 +425,7 @@ export default function OrganizationalRegForm() {
   // ============= STEP NAVIGATION =============
   const nextStep = useCallback(async () => {
     const fieldsToValidate: (keyof OrganizationalRegFormData)[][] = [
-      ["companyName", "rcNumber", "industryType", "companyAddress"],
+      ["companyName", "rcNumber", "industryType", "companySize"],
       ["email", "phoneNumber", "website", "country", "region"],
       ["password", "re_password"],
     ];
@@ -413,7 +463,8 @@ export default function OrganizationalRegForm() {
       safeLocalStorage.removeItem(AUTOSAVE_KEY);
 
       toast.success(
-        "Account created successfully! Please check your email to verify."
+        "Account created successfully! Please check your email to verify.",
+        { duration: 5000 }
       );
 
       // Navigate to verification page
@@ -584,18 +635,19 @@ export default function OrganizationalRegForm() {
                   htmlFor="companyAddress"
                   className="block text-sm font-medium text-gray-200 mb-2"
                 >
-                  Company Address <span className="text-red-500">*</span>
+                  Company Size (Number of Employees){" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
-                  id="companyAddress"
-                  {...register("companyAddress")}
-                  autoComplete="street-address"
-                  placeholder="e.g., 123 Business Street, Suite 100"
+                  id="companySize"
+                  {...register("companySize", { valueAsNumber: true })}
+                  type="number"
+                  placeholder="e.g., 100"
                   className="w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[#1a1a2e] border-gray-600 text-white placeholder-gray-500 transition"
                 />
-                {errors.companyAddress && (
+                {errors.companySize && (
                   <p className="text-sm text-red-500 mt-1.5">
-                    {errors.companyAddress.message}
+                    {errors.companySize.message}
                   </p>
                 )}
               </div>
