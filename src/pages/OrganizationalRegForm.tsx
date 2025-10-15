@@ -889,7 +889,7 @@ export default function OrganizationalRegForm() {
                 type="button"
                 onClick={prevStep}
                 disabled={loading}
-                className="px-5 py-2.5 border border-gray-600 rounded-lg text-gray-300 hover:text-white hover:border-gray-400 hover:bg-[#1a1a2e] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                className="px-5 py-2.5 border cursor-pointer border-gray-600 rounded-lg text-gray-300 hover:text-white hover:border-gray-400 hover:bg-[#1a1a2e] transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
               >
                 ← Previous
               </button>
@@ -903,7 +903,7 @@ export default function OrganizationalRegForm() {
                   type="button"
                   onClick={nextStep}
                   disabled={isSubmitting || loading}
-                  className="px-6 py-2.5 rounded-lg font-medium transition-all bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                  className="px-6 py-2.5 cursor-pointer rounded-lg font-medium transition-all bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                 >
                   Next →
                 </button>
@@ -914,7 +914,7 @@ export default function OrganizationalRegForm() {
                   className={`px-6 py-2.5 rounded-lg font-medium transition-all shadow-lg ${
                     !isValid || isSubmitting || loading
                       ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                      : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-xl"
+                      : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-xl cursor-pointer"
                   }`}
                 >
                   {loading ? (

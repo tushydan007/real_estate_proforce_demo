@@ -204,7 +204,7 @@ export default function Features() {
                       >
                         <Icon className="w-6 h-6" />
                       </motion.div>
-                      <CardTitle className="text-lg font-semibold text-center text-white relative z-10">
+                      <CardTitle className="text-lg whitespace-nowrap font-semibold text-center text-white relative z-10">
                         {feature.title}
                       </CardTitle>
                     </CardHeader>
